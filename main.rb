@@ -15,4 +15,9 @@ require_relative 'game'
 #* logic to compare placed pegs against secret pattern
 #* place key pags onto feedback portion of the board
 
+# touchup
+# show which row we are on right now
+
 game = Game.new
+game.introduction
+game.play

@@ -28,11 +28,11 @@ end
 
 # represents a code peg that can be placed on the board, a code peg can be of various colours
 class CodePeg
-  @@color_options = %w[red green purple yellow brown orange black white]
+  COLOR_OPTIONS = %w[red green purple yellow brown orange black white].freeze
   attr_reader :color
 
   def initialize(color_option)
-    unless @@color_options.include?(color_option)
+    unless COLOR_OPTIONS.include?(color_option)
       puts 'that is not a valid colour option!'
       return
     end
@@ -40,17 +40,20 @@ class CodePeg
   end
 
   def self.get_random_color
-    @@color_options.sample
+    COLOR_OPTIONS.sample
   end
 end
 
 class Game
+
+  attr_accessor :game_ended
+
   def initialize
     @human = Player.new(is_codemaker: false, is_human: true)
     @computer = Player.new(is_codemaker: true, is_human: false)
     @board = Board.new
-    introduction
-    # @board.show
+    @game_ended = false
+    @current_row = 0
 
     puts "secret code : #{@computer.debug_get_code}"
   end
@@ -59,6 +62,26 @@ class Game
     puts "Welcome to mastermind\nThis is the board\n\n"
     @board.show
     print "\n"
+  end
+
+  def play
+    until @game_ended
+      user_input = gets.chomp
+
+      puts "user input : #{user_input}"
+
+      unless valid_user_input?(user_input)
+        puts "That is not a valid color! Please try again"
+        next
+      end
+
+
+
+    end
+  end
+
+  def valid_user_input?(user_input)
+    CodePeg::COLOR_OPTIONS.include? user_input
   end
 end
 
