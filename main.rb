@@ -6,7 +6,7 @@ require_relative 'game'
 #// create the board
 #// define the colors a peg can be
 #// generate the secret pattern of pegs for the codebreaker to guess
-#* get inputs from user
+#* get inputs from userP
 #* instructions to the user on how to play can be done later
 #* translate user input into a color and position a peg of said onto the board
 #* allow the user to replace placed pegs
