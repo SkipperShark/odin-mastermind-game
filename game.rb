@@ -5,43 +5,39 @@ class Board
   attr_accessor :board
 
   def initialize
-    @board = []
-    create_code_row
-    create_decode_rows
+    @board = {}
+    add_code_rows
+    add_decode_rows
   end
 
   def show
     puts "Code Pegs\t\t\t\t\t\tKey Pegs"
-    @board.each do |row|
+    p @board[:code_row]
+    @board[:decode_row].each do |row|
       puts "#{row[:code_pegs]}\t\t\t\t|\t#{row[:key_pegs] == nil ? "" : row[:key_pegs]}"
     end
   end
 
-  def create_code_row
-    code_row = {
-      code_pegs:  ['?', '?', '?', '?'],
-      is_code: true,
-      key_pegs: nil
-    }
-    @board.prepend code_row
+  private
+
+  def add_code_rows
+    @board[:code_row] = ['?', '?', '?', '?']
   end
 
-  def create_decode_rows
+  def add_decode_rows
     decode_row = {
       code_pegs:  ['', '', '', ''],
       is_code: false,
       key_pegs: ['','','','','']
     }
-    12.times do
-      @board << decode_row
-    end
+    @board[:decode_row] = Array.new(12) {decode_row}
   end
 
 end
 
 # represents a code peg that can be placed on the board, a code peg can be of various colours
 class CodePeg
-  COLOR_OPTIONS = %w[red green purple yellow brown orange black white].freeze
+  COLOR_OPTIONS = %w[red green blue yellow brown orange black white].freeze
   attr_reader :color
 
   def initialize(color_option)
@@ -72,6 +68,7 @@ class Game
     @codebreaker = @human
 
     @guess = []
+    @clue = []
 
     puts "secret code : #{@computer.debug_get_code}"
   end
@@ -86,37 +83,76 @@ class Game
   def play
     until @game_ended
       build_guess_pattern
-      if user_confirmed_guess
-        compare_guess_to_secret
-        break
-      else
+      unless user_confirmed_guess
         reset_guess
         next
       end
+      compare_guess_to_secret
+      update_board
+      @game_ended = true if codebreaker_won?
+
     end
+    puts "game ended, thanks for playing"
   end
 
   private
+
+  def update_board
+
+  end
+
+  def codebreaker_won?
+    @clue.all? { |ele| ele.downcase.include?("full match")}
+  end
 
   def compare_guess_to_secret
     puts "start compare_guess_to_secret"
     #* same position and color
     clue = []
-    secret = @codemaker.code.clone
+    secret = @codemaker.code.clone.map { |code_peg| code_peg.color }
     guess = @guess
-    puts "secret : #{secret}, guess : #{guess}"
-    @guess.each.with_index do |code_color, i|
-      puts ""
-      # if secret.include?(code_color) &&
+    puts "\n\nstart\n\n"
+    puts "secret : #{secret}"
+    puts "guess : #{guess}"
+    puts "clue : #{clue}"
 
-      # secret_color = @guess[i]
-      # if code_color == secret_color
-      #   clue.append("red")
-      # end
+    # find color and position matches
+    guess.each.with_index do |guess_color, i|
+      secret.each.with_index do |secret_color, y|
+        if guess_color == secret_color and i == y
+          clue << "#{guess_color} - Full match"
+          guess[i] = nil
+          secret[y] = nil
+          break
+        end
+      end
+    end
+    guess.compact!
+    secret.compact!
 
+
+    # find position matches only
+    guess.each.with_index do |guess_color, i|
+      secret.each.with_index do |secret_color, y|
+        if guess_color == secret_color
+          clue << "#{guess_color} - Color Match"
+          guess[i] = nil
+          secret[y] = nil
+          break
+        end
+      end
     end
 
-    #* same
+    guess.compact!
+    secret.compact!
+
+    puts "\n\nafter first iteration \n\n"
+    puts "secret : #{secret}"
+    puts "guess : #{guess}"
+    puts "clue : #{clue}"
+
+    @clue = clue
+
   end
 
   def user_confirmed_guess
@@ -169,7 +205,8 @@ class Game
 end
 
 class Player
-  attr_reader :code
+  # attr_reader :code
+  attr_accessor :code
 
   # 4 cases
   # human codebreaker (do nothing)
@@ -202,5 +239,5 @@ class Player
 
   private
 
-  attr_writer :code
+  # attr_writer :code
 end
