@@ -5,7 +5,10 @@ class Board
   attr_accessor :board
 
   def initialize
-    @board = {}
+    @board = {
+      code_row: [],
+      decode_row: []
+    }
     add_code_rows
     add_decode_rows
   end
@@ -18,6 +21,13 @@ class Board
     end
   end
 
+  def add_guess(guess_pattern, clue_pattern)
+    row_index = @board[:decode_row].reverse.index { |row| row.all? {|space| space == ""}}
+    return if row_index.nil?
+    @board[:decode_row][row_index] = guess_pattern
+    @board[:code_row][row_index] = clue_pattern
+  end
+
   private
 
   def add_code_rows
@@ -27,7 +37,7 @@ class Board
   def add_decode_rows
     decode_row = {
       code_pegs:  ['', '', '', ''],
-      is_code: false,
+      # is_code: false,
       key_pegs: ['','','','','']
     }
     @board[:decode_row] = Array.new(12) {decode_row}
@@ -97,7 +107,7 @@ class Game
 
   private
 
-  def update_board
+  def update_
 
   end
 
