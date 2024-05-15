@@ -6,8 +6,8 @@ class Board
 
   def initialize
     @board = {
-      code_row: [],
-      decode_row: []
+      code_rows: [],
+      decode_rows: []
     }
     add_code_rows
     add_decode_rows
@@ -15,32 +15,46 @@ class Board
 
   def show
     puts "Code Pegs\t\t\t\t\t\tKey Pegs"
-    p @board[:code_row]
-    @board[:decode_row].each do |row|
+    p @board[:code_rows]
+    @board[:decode_rows].each do |row|
       puts "#{row[:code_pegs]}\t\t\t\t|\t#{row[:key_pegs] == nil ? "" : row[:key_pegs]}"
     end
   end
 
   def add_guess(guess_pattern, clue_pattern)
-    row_index = @board[:decode_row].reverse.index { |row| row.all? {|space| space == ""}}
+    row_index = @board[:decode_rows].rindex { |row| row[:code_pegs].all?("") }
     return if row_index.nil?
-    @board[:decode_row][row_index] = guess_pattern
-    @board[:code_row][row_index] = clue_pattern
+    puts "row_index : #{row_index}"
+    @board[:decode_rows][row_index][:code_pegs] = guess_pattern
+    @board[:decode_rows][row_index][:key_pegs] = clue_pattern
   end
 
   private
 
   def add_code_rows
-    @board[:code_row] = ['?', '?', '?', '?']
+    @board[:code_rows] = ['?', '?', '?', '?']
   end
 
   def add_decode_rows
-    decode_row = {
-      code_pegs:  ['', '', '', ''],
-      # is_code: false,
-      key_pegs: ['','','','','']
-    }
-    @board[:decode_row] = Array.new(12) {decode_row}
+    # decode_row = {
+    #   code_pegs:  ['', '', '', ''],
+    #   # is_code: false,
+    #   key_pegs: ['','','','','']
+    # }
+    # @board[:decode_rows] = Array.new(12) {decode_row}
+    # @board[:decode_rows] = Array.new(12) do
+    #   decode_row = {
+    #     code_pegs:  ['', '', '', ''],
+    #     # is_code: false,
+    #     key_pegs: ['','','','','']
+    #   }
+    #   decode_row
+    # end
+    @board[:decode_rows] = Array.new(12) {{
+        code_pegs:  ['', '', '', ''],
+        # is_code: false,
+        key_pegs: ['','','','','']
+      }}
   end
 
 end
@@ -102,13 +116,14 @@ class Game
       @game_ended = true if codebreaker_won?
 
     end
+    @board.show
     puts "game ended, thanks for playing"
   end
 
   private
 
-  def update_
-
+  def update_board
+    @board.add_guess(@guess, @clue)
   end
 
   def codebreaker_won?
@@ -120,7 +135,7 @@ class Game
     #* same position and color
     clue = []
     secret = @codemaker.code.clone.map { |code_peg| code_peg.color }
-    guess = @guess
+    guess = @guess.clone
     puts "\n\nstart\n\n"
     puts "secret : #{secret}"
     puts "guess : #{guess}"
@@ -188,7 +203,7 @@ class Game
         puts "That is not a valid color! Please try again"
         next
       end
-      add_color_to_guess input
+      @guess << input
       puts "your guess : #{guess}"
     end
   end
@@ -199,10 +214,6 @@ class Game
 
   def valid_user_input?(user_input)
     CodePeg::COLOR_OPTIONS.include? user_input
-  end
-
-  def add_color_to_guess(color)
-    @guess << color
   end
 
   def guess_complete
