@@ -17,6 +17,8 @@ require_relative 'game'
 #* place code pegs on code portion of the board
 #* check if user guess all correct
 #* check game end condition
+# problem, if no clue pegs are awarded, for some reason, the game ends
+# problem, if no clue pegs are awarded, the key pegs array becomes empty
 #* if game did not end, move on to next row
 #* repeat until end
 #* if codebreaker has not guess right pattern at the end, end the game

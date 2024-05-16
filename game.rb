@@ -13,7 +13,7 @@ class Board
     add_decode_rows
   end
 
-  def show
+  def show(row_to_indicate = nil)
     puts "Code Pegs\t\t\t\t\t\tKey Pegs"
     p @board[:code_rows]
     @board[:decode_rows].each do |row|
@@ -24,9 +24,12 @@ class Board
   def add_guess(guess_pattern, clue_pattern)
     row_index = @board[:decode_rows].rindex { |row| row[:code_pegs].all?("") }
     return if row_index.nil?
-    puts "row_index : #{row_index}"
     @board[:decode_rows][row_index][:code_pegs] = guess_pattern
-    @board[:decode_rows][row_index][:key_pegs] = clue_pattern
+
+    clue_pattern.each_index do |i|
+      @board[:decode_rows][row_index][:key_pegs][i] = clue_pattern[i]
+    end
+
   end
 
   private
@@ -53,7 +56,7 @@ class Board
     @board[:decode_rows] = Array.new(12) {{
         code_pegs:  ['', '', '', ''],
         # is_code: false,
-        key_pegs: ['','','','','']
+        key_pegs: ['','','','']
       }}
   end
 
@@ -77,16 +80,33 @@ class CodePeg
   end
 end
 
-class Game
+# represents a key peg that can be placed on the feedback portion of the board
+class KeyPeg
+  COLOR_OPTIONS = %w[red white].freeze
+  private_class_method :new
+  attr_reader :color
 
-  attr_accessor :game_ended, :guess
+  def initialize(color_option)
+    @color = color_option
+  end
+
+  def self.full_match
+    self.new("red")
+  end
+
+  def self.position_match
+    self.new("white")
+  end
+end
+
+class Game
 
   def initialize
     @human = Player.new(is_codemaker: false, is_human: true)
     @computer = Player.new(is_codemaker: true, is_human: false)
     @board = Board.new
     @game_ended = false
-    @turn = 0
+    @turn = 1
 
     @codemaker = @computer
     @codebreaker = @human
@@ -99,13 +119,15 @@ class Game
 
   def introduction
     puts "Welcome to mastermind\nThis is the board\n\n"
+    puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
     @board.show
     print "\n"
-    puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
   end
 
   def play
-    until @game_ended
+    until game_ended
+      board.show
+      puts "turn : #{turn}"
       build_guess_pattern
       unless user_confirmed_guess
         reset_guess
@@ -113,70 +135,69 @@ class Game
       end
       compare_guess_to_secret
       update_board
-      @game_ended = true if codebreaker_won?
-
+      self.game_ended = true if codebreaker_won?
+      next_turn
     end
-    @board.show
+    board.show
     puts "game ended, thanks for playing"
   end
 
   private
 
+  attr_accessor :game_ended, :guess, :turn, :clue, :board
+  attr_reader :codemaker, :codebreaker
+
+  def next_turn
+    self.clue = []
+    self.guess = []
+    self.turn += 1
+  end
+
   def update_board
-    @board.add_guess(@guess, @clue)
+    board.add_guess(guess, clue)
   end
 
   def codebreaker_won?
-    @clue.all? { |ele| ele.downcase.include?("full match")}
+    clue.count { |ele| ele.downcase.include?("full match")} >= 4
   end
 
   def compare_guess_to_secret
-    puts "start compare_guess_to_secret"
-    #* same position and color
-    clue = []
-    secret = @codemaker.code.clone.map { |code_peg| code_peg.color }
-    guess = @guess.clone
-    puts "\n\nstart\n\n"
-    puts "secret : #{secret}"
-    puts "guess : #{guess}"
-    puts "clue : #{clue}"
+    secret_pattern = codemaker.code.clone.map { |code_peg| code_peg.color }
+    guess_pattern = guess.clone
 
     # find color and position matches
-    guess.each.with_index do |guess_color, i|
-      secret.each.with_index do |secret_color, y|
+    guess_pattern.each.with_index do |guess_color, i|
+      secret_pattern.each.with_index do |secret_color, y|
         if guess_color == secret_color and i == y
-          clue << "#{guess_color} - Full match"
-          guess[i] = nil
-          secret[y] = nil
+          self.clue << "#{guess_color} - Full match"
+          guess_pattern[i] = nil
+          secret_pattern[y] = nil
           break
         end
       end
     end
-    guess.compact!
-    secret.compact!
-
+    guess_pattern.compact!
+    secret_pattern.compact!
 
     # find position matches only
-    guess.each.with_index do |guess_color, i|
-      secret.each.with_index do |secret_color, y|
+    guess_pattern.each.with_index do |guess_color, i|
+      secret_pattern.each.with_index do |secret_color, y|
         if guess_color == secret_color
-          clue << "#{guess_color} - Color Match"
-          guess[i] = nil
-          secret[y] = nil
+          self.clue << "#{guess_color} - Color Match"
+          guess_pattern[i] = nil
+          secret_pattern[y] = nil
           break
         end
       end
     end
 
-    guess.compact!
-    secret.compact!
+    guess_pattern.compact!
+    secret_pattern.compact!
 
     puts "\n\nafter first iteration \n\n"
-    puts "secret : #{secret}"
-    puts "guess : #{guess}"
+    puts "secret_pattern : #{secret_pattern}"
+    puts "guess_pattern : #{guess_pattern}"
     puts "clue : #{clue}"
-
-    @clue = clue
 
   end
 
@@ -209,7 +230,7 @@ class Game
   end
 
   def user_input
-    gets.chomp.downcase
+    gets.chomp.downcase.lstrip.rstrip
   end
 
   def valid_user_input?(user_input)
