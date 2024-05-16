@@ -17,7 +17,7 @@ class Board
     puts "Code Pegs\t\t\t\t\t\tKey Pegs"
     p @board[:code_rows]
     @board[:decode_rows].each do |row|
-      puts "#{row[:code_pegs]}\t\t\t\t|\t#{row[:key_pegs] == nil ? "" : row[:key_pegs]}"
+      puts "#{row[:code_pegs].map(&:to_s)}\t\t\t\t|\t#{row[:key_pegs].map(&:to_s)}"
     end
   end
 
@@ -69,8 +69,7 @@ class CodePeg
 
   def initialize(color_option)
     unless COLOR_OPTIONS.include?(color_option)
-      puts 'that is not a valid colour option!'
-      return
+      raise ArgumentError.new("Invalid code peg color option ")
     end
     @color = color_option
   end
@@ -78,11 +77,18 @@ class CodePeg
   def self.random_color
     COLOR_OPTIONS.sample
   end
+
+  def to_s
+    color
+  end
 end
 
 # represents a key peg that can be placed on the feedback portion of the board
 class KeyPeg
-  COLOR_OPTIONS = %w[red white].freeze
+  FULL_MATCH_COLOR = "red"
+  POSITION_MATCH_COLOR = "white"
+  COLOR_OPTIONS = [FULL_MATCH_COLOR, POSITION_MATCH_COLOR].freeze
+
   private_class_method :new
   attr_reader :color
 
@@ -91,12 +97,33 @@ class KeyPeg
   end
 
   def self.full_match
-    self.new("red")
+    self.new(FULL_MATCH_COLOR)
   end
 
   def self.position_match
-    self.new("white")
+    self.new(POSITION_MATCH_COLOR)
   end
+
+  def to_s
+    color
+  end
+
+  def full_match?
+    if color == FULL_MATCH_COLOR
+      true
+    else
+      false
+    end
+  end
+
+  def position_match?
+    if color == POSITION_MATCH_COLOR
+      true
+    else
+      false
+    end
+  end
+
 end
 
 class Game
@@ -158,18 +185,18 @@ class Game
   end
 
   def codebreaker_won?
-    clue.count { |ele| ele.downcase.include?("full match")} >= 4
+    clue.count { |key_peg| key_peg.full_match? } >= 4
   end
 
   def compare_guess_to_secret
-    secret_pattern = codemaker.code.clone.map { |code_peg| code_peg.color }
-    guess_pattern = guess.clone
+    secret_pattern = codemaker.code.clone.map(&:to_s)
+    guess_pattern = guess.clone.map(&:to_s)
 
     # find color and position matches
     guess_pattern.each.with_index do |guess_color, i|
       secret_pattern.each.with_index do |secret_color, y|
         if guess_color == secret_color and i == y
-          self.clue << "#{guess_color} - Full match"
+          self.clue << KeyPeg.full_match
           guess_pattern[i] = nil
           secret_pattern[y] = nil
           break
@@ -183,7 +210,7 @@ class Game
     guess_pattern.each.with_index do |guess_color, i|
       secret_pattern.each.with_index do |secret_color, y|
         if guess_color == secret_color
-          self.clue << "#{guess_color} - Color Match"
+          self.clue << KeyPeg.position_match
           guess_pattern[i] = nil
           secret_pattern[y] = nil
           break
@@ -194,10 +221,10 @@ class Game
     guess_pattern.compact!
     secret_pattern.compact!
 
-    puts "\n\nafter first iteration \n\n"
-    puts "secret_pattern : #{secret_pattern}"
-    puts "guess_pattern : #{guess_pattern}"
-    puts "clue : #{clue}"
+    # puts "\n\nafter first iteration \n\n"
+    # puts "secret_pattern : #{secret_pattern}"
+    # puts "guess_pattern : #{guess_pattern}"
+    # puts "clue : #{clue}"
 
   end
 
@@ -217,15 +244,19 @@ class Game
   end
 
   def build_guess_pattern
-    puts "Input color for first guess of your guess pattern"
+    puts 'Input color for first guess of your guess pattern. Enter "r" to start again'
     until guess_complete
+      puts "your guesses : #{guess.map { |ele| ele.color}}"
       input = user_input
+      if input == "r"
+        self.guess = []
+        next
+      end
       unless valid_user_input? input
         puts "That is not a valid color! Please try again"
         next
       end
-      @guess << input
-      puts "your guess : #{guess}"
+      self.guess << CodePeg.new(input)
     end
   end
 
@@ -234,7 +265,12 @@ class Game
   end
 
   def valid_user_input?(user_input)
-    CodePeg::COLOR_OPTIONS.include? user_input
+    begin
+      CodePeg.new user_input
+      true
+    rescue ArgumentError
+      false
+    end
   end
 
   def guess_complete
