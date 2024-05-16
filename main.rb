@@ -13,15 +13,15 @@ require_relative 'game'
 # validation to ensure all spaces on a row are placed with pegs
 # provide a way for the codebreaker to check placed pegs against the secret pattern
 # logic to compare placed pegs against secret pattern
-#* place key pegs onto feedback portion of the board
-#* place code pegs on code portion of the board
-#* check if user guess all correct
-#* check game end condition
+# place key pegs onto feedback portion of the board
+# place code pegs on code portion of the board
+# check if user guess all correct
+# check game end condition
 # problem, if no clue pegs are awarded, for some reason, the game ends
 # problem, if no clue pegs are awarded, the key pegs array becomes empty
 #* if game did not end, move on to next row
 #* repeat until end
-#* if codebreaker has not guess right pattern at the end, end the game
+#* if codebreaker has not guessed the right pattern at the end, end the game
 
 # enhancement
 # show which row we are on right now

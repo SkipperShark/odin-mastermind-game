@@ -145,9 +145,9 @@ class Game
   end
 
   def introduction
-    puts "Welcome to mastermind\nThis is the board\n\n"
+    puts "Welcome to mastermind\n\n"
     puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
-    @board.show
+    # @board.show
     print "\n"
   end
 
@@ -229,16 +229,16 @@ class Game
   end
 
   def user_confirmed_guess
-    puts "guess pattern complete, would you like to confirm? (y/n)"
     valid_choice = false
     until valid_choice == true
+      puts "guess pattern complete, would you like to confirm? (y/n)"
       input = user_input
       if input == "y"
         return true
       elsif input == "n"
         return false
       else
-        "I'm not sure what you mean, please try again"
+        puts "I'm not sure what you mean, please try again"
       end
     end
   end
@@ -258,6 +258,7 @@ class Game
       end
       self.guess << CodePeg.new(input)
     end
+    puts "final guess pattern : #{guess.map { |ele| ele.color}}"
   end
 
   def user_input
