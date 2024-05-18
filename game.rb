@@ -1,5 +1,13 @@
 # frozen_string_literal: true
 
+class Utilities
+
+  def user_input
+    gets.chomp.downcase.lstrip.rstrip
+  end
+end
+
+
 # represents the mastermind board
 class Board
   attr_accessor :board
@@ -13,7 +21,7 @@ class Board
     add_decode_rows
   end
 
-  def show(row_to_indicate = nil)
+  def show
     puts "Code Pegs\t\t\t\t\t\tKey Pegs"
     p @board[:code_rows]
     @board[:decode_rows].each do |row|
@@ -39,20 +47,6 @@ class Board
   end
 
   def add_decode_rows
-    # decode_row = {
-    #   code_pegs:  ['', '', '', ''],
-    #   # is_code: false,
-    #   key_pegs: ['','','','','']
-    # }
-    # @board[:decode_rows] = Array.new(12) {decode_row}
-    # @board[:decode_rows] = Array.new(12) do
-    #   decode_row = {
-    #     code_pegs:  ['', '', '', ''],
-    #     # is_code: false,
-    #     key_pegs: ['','','','','']
-    #   }
-    #   decode_row
-    # end
     @board[:decode_rows] = Array.new(12) {{
         code_pegs:  ['', '', '', ''],
         # is_code: false,
@@ -64,7 +58,8 @@ end
 
 # represents a code peg that can be placed on the board, a code peg can be of various colours
 class CodePeg
-  COLOR_OPTIONS = %w[red green blue yellow brown orange black white].freeze
+  # COLOR_OPTIONS = %w[red green blue yellow brown orange black white].freeze
+  COLOR_OPTIONS = %w[red green blue yellow black white].freeze
   attr_reader :color
 
   def initialize(color_option)
@@ -126,17 +121,24 @@ class KeyPeg
 
 end
 
-class Game
+class Game < Utilities
 
   def initialize
-    @human = Player.new(is_codemaker: false, is_human: true)
-    @computer = Player.new(is_codemaker: true, is_human: false)
+    super
     @board = Board.new
-    @game_ended = false
+    @winner = nil
     @turn = 1
 
-    @codemaker = @computer
-    @codebreaker = @human
+    if player_is_codemaker
+      @codemaker = Player.new(is_codemaker: true, is_human: true)
+      @codebreaker = Player.new(is_codemaker: false, is_human: false)
+    else
+      @codemaker = Player.new(is_codemaker: true, is_human: false)
+      @codebreaker = Player.new(is_codemaker: false, is_human: true)
+    end
+
+    # @codemaker = @computer
+    # @codebreaker = @human
 
     @guess = []
     @clue = []
@@ -152,27 +154,50 @@ class Game
   end
 
   def play
-    until game_ended
+    while winner.nil?
       board.show
       puts "turn : #{turn}"
-      build_guess_pattern
+      codebreaker.build_guess_pattern
       unless user_confirmed_guess
-        reset_guess
+        codebreaker.reset_guess
         next
       end
       compare_guess_to_secret
       update_board
-      self.game_ended = true if codebreaker_won?
+      if codebreaker_won?
+        self.winner = "codebreaker"
+      elsif codemaker_won?
+        self.winner = "codemaker"
+      end
       next_turn
     end
     board.show
-    puts "game ended, thanks for playing"
+    puts "game ended! Thanks for playing. Winner : #{winner}"
   end
 
   private
 
-  attr_accessor :game_ended, :guess, :turn, :clue, :board
+  attr_accessor :winner, :guess, :turn, :clue, :board
   attr_reader :codemaker, :codebreaker
+
+  def player_is_codemaker
+    valid_choice = false
+    until valid_choice == true
+      puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker"
+      input = user_input
+      if input == "y"
+        return true
+      elsif input == "n"
+        return false
+      else
+        puts "I'm not sure what you mean, please try again"
+      end
+    end
+  end
+
+  def codemaker_won?
+    turn >= 12 && !codebreaker_won?
+  end
 
   def next_turn
     self.clue = []
@@ -243,47 +268,47 @@ class Game
     end
   end
 
-  def build_guess_pattern
-    puts 'Input color for first guess of your guess pattern. Enter "r" to start again'
-    until guess_complete
-      puts "your guesses : #{guess.map { |ele| ele.color}}"
-      input = user_input
-      if input == "r"
-        self.guess = []
-        next
-      end
-      unless valid_user_input? input
-        puts "That is not a valid color! Please try again"
-        next
-      end
-      self.guess << CodePeg.new(input)
-    end
-    puts "final guess pattern : #{guess.map { |ele| ele.color}}"
-  end
+  # def build_guess_pattern
+  #   puts 'Input color for first guess of your guess pattern. Enter "r" to start again'
+  #   until guess_complete
+  #     puts "your guesses : #{guess.map { |ele| ele.color}}"
+  #     input = user_input
+  #     if input == "r"
+  #       self.guess = []
+  #       next
+  #     end
+  #     unless valid_user_input? input
+  #       puts "That is not a valid color! Please try again"
+  #       next
+  #     end
+  #     self.guess << CodePeg.new(input)
+  #   end
+  #   puts "final guess pattern : #{guess.map { |ele| ele.color}}"
+  # end
 
-  def user_input
-    gets.chomp.downcase.lstrip.rstrip
-  end
+  # def user_input
+  #   gets.chomp.downcase.lstrip.rstrip
+  # end
 
-  def valid_user_input?(user_input)
-    begin
-      CodePeg.new user_input
-      true
-    rescue ArgumentError
-      false
-    end
-  end
+  # def valid_user_input?(user_input)
+  #   begin
+  #     CodePeg.new user_input
+  #     true
+  #   rescue ArgumentError
+  #     false
+  #   end
+  # end
 
-  def guess_complete
-    @guess.length == 4
-  end
+  # def guess_complete
+  #   @guess.length == 4
+  # end
 
-  def reset_guess
-    @guess.clear
-  end
+  # def reset_guess
+  #   @guess.clear
+  # end
 end
 
-class Player
+class Player < Utilities
   # attr_reader :code
   attr_accessor :code
 
@@ -294,7 +319,12 @@ class Player
   # computer codemaker (generate pattern)
 
   def initialize(is_codemaker:, is_human:)
-    @code = nil unless is_codemaker
+    super
+    if is_codemaker
+      @code = []
+    else
+      @guess = []
+    end
 
     if is_human
       prompt_secret_pattern
@@ -316,7 +346,43 @@ class Player
     @code.map(&:color)
   end
 
+  def build_guess_pattern
+    puts 'Input color for first guess of your guess pattern. Enter "r" to start again'
+    guess = []
+    until guess.length == 4
+      puts "your guesses : #{guess.map { |ele| ele.color}}"
+      input = user_input
+      if input == "r"
+        guess = []
+        next
+      end
+      unless valid_user_input? input
+        puts "That is not a valid color! Please try again"
+        next
+      end
+      self.guess << CodePeg.new(input)
+    end
+    puts "final guess pattern : #{guess.map { |ele| ele.color}}"
+  end
+
   private
+
+  def valid_user_input?(user_input)
+    begin
+      CodePeg.new user_input
+      true
+    rescue ArgumentError
+      false
+    end
+  end
+
+  def reset_guess
+    @guess.clear
+  end
+
+  # def guess_complete
+  #   @guess.length == 4
+  # end
 
   # attr_writer :code
 end
