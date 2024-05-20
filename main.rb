@@ -23,8 +23,9 @@ require_relative 'game'
 # repeat until end
 # if codebreaker has not guessed the right pattern at the end, end the game
 #* if player wants to be codemaker, prompt them for secret pattern
+#* get secret pattern from user
 #* show the user the secret pattern they entered
-#* implement algorith for the computer to guess the pattern
+#* implement algorithm for the computer to guess the pattern
 
 # enhancement
 #* show which row we are on right now

@@ -5,8 +5,7 @@ require_relative 'CodePeg'
 
 
 class Player < Utilities
-  # attr_reader :code
-  attr_accessor :code, :guess
+  attr_accessor :secret, :guess
 
   # 4 cases
   # human codebreaker (do nothing)
@@ -17,35 +16,50 @@ class Player < Utilities
   def initialize(is_codemaker:, is_human:)
     super()
     if is_codemaker
-      @code = []
+      @secret = []
+      if is_human
+        prompt_secret_pattern
+      else
+        get_random_secret_pattern
+      end
     else
       @guess = []
-    end
-
-    if is_human
-      prompt_secret_pattern
-    else
-      get_random_secret_pattern
     end
 
   end
 
   def prompt_secret_pattern
     # TODO: implementation pending
+    puts 'Input color for first secret of your secret pattern. Enter "r" to start again'
+    until pattern_complete secret
+      puts "your secret : #{secret.map { |ele| ele.color}}"
+      input = user_input
+      if input == "r"
+        #todo, development stop marker
+        reset secret
+        next
+      end
+      unless valid_user_input? input
+        puts "That is not a valid color! Please try again"
+        next
+      end
+      self.guess << CodePeg.new(input)
+    end
+    puts "final guess pattern : #{guess.map { |ele| ele.color}}"
   end
 
 
   def debug_get_code
-    code.map(&:color)
+    secret.map(&:color)
   end
 
   def build_guess_pattern
     puts 'Input color for first guess of your guess pattern. Enter "r" to start again'
-    until guess.length == 4
+    until pattern_complete guess
       puts "your guesses : #{guess.map { |ele| ele.color}}"
       input = user_input
       if input == "r"
-        reset_guess
+        reset guess
         next
       end
       unless valid_user_input? input
@@ -72,14 +86,14 @@ class Player < Utilities
     end
   end
 
-  def reset_guess
-    guess.clear
+  def reset(pattern)
+    pattern.clear
   end
 
   private
 
     def get_random_secret_pattern
-      self.code = Array.new(4) { CodePeg.new(CodePeg.random_color) }
+      self.secret = Array.new(4) { CodePeg.new(CodePeg.random_color) }
     end
 
     def valid_user_input?(user_input)
@@ -91,8 +105,8 @@ class Player < Utilities
       end
     end
 
-    def guess_complete
-      guess.length == 4
+    def pattern_complete(pattern)
+      pattern.length == 4
     end
 
 end

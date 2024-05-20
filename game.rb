@@ -38,13 +38,9 @@ class Game < Utilities
         codebreaker.reset_guess
         next
       end
-      clue = compute_clue(codebreaker.guess, codemaker.code)
+      clue = compute_clue(codebreaker.guess, codemaker.secret)
       board.add_guess(codebreaker.guess, clue)
-      if codebreaker_won? clue
-        self.winner = "codebreaker"
-      elsif codemaker_won? clue
-        self.winner = "codemaker"
-      end
+      self.winner = determine_winner clue
       next_turn
       codebreaker.reset_guess
     end
@@ -72,16 +68,21 @@ class Game < Utilities
       end
     end
 
-    def codemaker_won?(clue)
-      turn >= 12 && !codebreaker_won?(clue)
+    def determine_winner (clue)
+      codebreaker_won = clue.count { |key_peg| key_peg.full_match? } >= 4
+      codemaker_won = turn >= 12 && !codebreaker_won?(clue)
+      if codebreaker_won
+        "codebreaker"
+      elsif codemaker_won
+        "codemaker"
+      else
+        nil
+      end
+      nil
     end
 
     def next_turn
       self.turn += 1
-    end
-
-    def codebreaker_won?(clue)
-      clue.count { |key_peg| key_peg.full_match? } >= 4
     end
 
     def compute_clue(guess, secret)
