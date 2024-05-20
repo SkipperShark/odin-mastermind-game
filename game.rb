@@ -39,11 +39,10 @@ class Game < Utilities
         next
       end
       clue = compute_clue(codebreaker.guess, codemaker.code)
-      puts "codebreaker.guess : #{codebreaker.guess}"
       board.add_guess(codebreaker.guess, clue)
       if codebreaker_won? clue
         self.winner = "codebreaker"
-      elsif codemaker_won?
+      elsif codemaker_won? clue
         self.winner = "codemaker"
       end
       next_turn
@@ -73,8 +72,8 @@ class Game < Utilities
       end
     end
 
-    def codemaker_won?
-      turn >= 12 && !codebreaker_won?
+    def codemaker_won?(clue)
+      turn >= 12 && !codebreaker_won?(clue)
     end
 
     def next_turn

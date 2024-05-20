@@ -18,7 +18,6 @@ class CodePeg
   end
 
   def to_s
-    # puts "from within CodePeg : #{color}"
     color
   end
 end
