@@ -6,7 +6,7 @@ require_relative 'CodePeg'
 
 class Player < Utilities
   # attr_reader :code
-  attr_accessor :code
+  attr_accessor :code, :guess
 
   # 4 cases
   # human codebreaker (do nothing)
@@ -34,17 +34,13 @@ class Player < Utilities
     # TODO: implementation pending
   end
 
-  def get_random_secret_pattern
-    @code = Array.new(4) { CodePeg.new(CodePeg.random_color) }
-  end
 
   def debug_get_code
-    @code.map(&:color)
+    code.map(&:color)
   end
 
   def build_guess_pattern
     puts 'Input color for first guess of your guess pattern. Enter "r" to start again'
-    guess = []
     until guess.length == 4
       puts "your guesses : #{guess.map { |ele| ele.color}}"
       input = user_input
@@ -63,22 +59,40 @@ class Player < Utilities
 
   private
 
-  def valid_user_input?(user_input)
-    begin
-      CodePeg.new user_input
-      true
-    rescue ArgumentError
-      false
+    def get_random_secret_pattern
+      self.code = Array.new(4) { CodePeg.new(CodePeg.random_color) }
     end
-  end
 
-  def reset_guess
-    @guess.clear
-  end
+    def valid_user_input?(user_input)
+      begin
+        CodePeg.new user_input
+        true
+      rescue ArgumentError
+        false
+      end
+    end
 
-  # def guess_complete
-  #   @guess.length == 4
-  # end
+    def reset_guess
+      guess.clear
+    end
 
-  # attr_writer :code
+    def user_confirmed_guess
+      valid_choice = false
+      until valid_choice == true
+        puts "guess pattern complete, would you like to confirm? (y/n)"
+        input = user_input
+        if input == "y"
+          return true
+        elsif input == "n"
+          return false
+        else
+          puts "I'm not sure what you mean, please try again"
+        end
+      end
+    end
+
+    def guess_complete
+      guess.length == 4
+    end
+
 end
