@@ -45,7 +45,7 @@ class Player < Utilities
       puts "your guesses : #{guess.map { |ele| ele.color}}"
       input = user_input
       if input == "r"
-        guess = []
+        reset_guess
         next
       end
       unless valid_user_input? input
@@ -55,6 +55,25 @@ class Player < Utilities
       self.guess << CodePeg.new(input)
     end
     puts "final guess pattern : #{guess.map { |ele| ele.color}}"
+  end
+
+  def user_confirmed_guess
+    valid_choice = false
+    until valid_choice == true
+      puts "guess pattern complete, would you like to confirm? (y/n)"
+      input = user_input
+      if input == "y"
+        return true
+      elsif input == "n"
+        return false
+      else
+        puts "I'm not sure what you mean, please try again"
+      end
+    end
+  end
+
+  def reset_guess
+    guess.clear
   end
 
   private
@@ -69,25 +88,6 @@ class Player < Utilities
         true
       rescue ArgumentError
         false
-      end
-    end
-
-    def reset_guess
-      guess.clear
-    end
-
-    def user_confirmed_guess
-      valid_choice = false
-      until valid_choice == true
-        puts "guess pattern complete, would you like to confirm? (y/n)"
-        input = user_input
-        if input == "y"
-          return true
-        elsif input == "n"
-          return false
-        else
-          puts "I'm not sure what you mean, please try again"
-        end
       end
     end
 
