@@ -13,6 +13,10 @@ class Game < Utilities
     @winner = nil
     @turn = 1
 
+    puts "Welcome to mastermind\n\n"
+    puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
+    print "\n"
+
     if player_is_codemaker
       @codemaker = Player.new(is_codemaker: true, is_human: true)
       @codebreaker = Player.new(is_codemaker: false, is_human: false)
@@ -20,38 +24,63 @@ class Game < Utilities
       @codemaker = Player.new(is_codemaker: true, is_human: false)
       @codebreaker = Player.new(is_codemaker: false, is_human: true)
     end
-    puts "secret code : #{@codemaker.debug_get_code}"
-  end
-
-  def introduction
-    puts "Welcome to mastermind\n\n"
-    puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
-    print "\n"
   end
 
   def play
-    while winner.nil?
-      board.show
-      puts "turn : #{turn}"
-      codebreaker.build_guess_pattern
-      unless codebreaker.user_confirmed_guess
+    puts "\n\nGame Start!\n\n"
+    puts "secret code : #{@codemaker.show_secret}\n\n"
+    if codebreaker.is_human == true
+      while winner.nil?
+        board.show
+        puts "turn : #{turn}"
+        codebreaker.build_guess_pattern
+        unless codebreaker.user_confirmed?
+          codebreaker.reset_guess
+          next
+        end
+        clue = compute_clue(codebreaker.guess, codemaker.secret)
+        board.add_guess(codebreaker.guess, clue)
+        self.winner = determine_winner clue
+        next_turn
         codebreaker.reset_guess
-        next
       end
-      clue = compute_clue(codebreaker.guess, codemaker.secret)
-      board.add_guess(codebreaker.guess, clue)
-      self.winner = determine_winner clue
-      next_turn
-      codebreaker.reset_guess
+      board.show
+      puts "game ended! Thanks for playing. WINNER : #{winner}"
+
+    elsif codemaker.is_human == true
+      while winner.nil?
+        board.show
+        puts "turn : #{turn}"
+        clue = []
+        # codemaker.derive_guess_pattern clue
+        first_turn = clue.empty?
+        if first_turn
+          until codebreaker.guess_complete? codebreaker.guess
+            codebreaker.guess << CodePeg.new(CodePeg.random_color)
+          end
+        end
+        clue = computer(codebreaker.guess, codemaker.secret)
+        board.add_guess(codebreaker.guess, clue)
+        self.winner = determine_winner clue
+        next_turn
+        codebreaker.reset_guess
+        break
+      end
     end
-    board.show
-    puts "game ended! Thanks for playing. WINNER : #{winner}"
+
   end
 
   private
 
     attr_accessor :winner, :guess, :turn, :clue, :board
     attr_reader :codemaker, :codebreaker
+
+    def derive_guess_pattern(clue)
+      first_turn = clue.empty?
+      if first_turn
+
+      end
+    end
 
     def player_is_codemaker
       valid_choice = false
@@ -71,14 +100,15 @@ class Game < Utilities
     def determine_winner (clue)
       codebreaker_won = clue.count { |key_peg| key_peg.full_match? } >= 4
       codemaker_won = turn >= 12 && !codebreaker_won?(clue)
-      if codebreaker_won
-        "codebreaker"
-      elsif codemaker_won
-        "codemaker"
-      else
-        nil
+      puts "------------ determine_winner ------------"
+      puts "codebreaker_won : #{codebreaker_won}"
+      puts "codemaker_won : #{codemaker_won}"
+      if codebreaker_won == true
+        return "codebreaker"
+      elsif codemaker_won == true
+        return "codemaker"
       end
-      nil
+      return nil
     end
 
     def next_turn

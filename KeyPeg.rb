@@ -33,6 +33,10 @@ class KeyPeg
     end
   end
 
+  def self.random_color
+    COLOR_OPTIONS.sample
+  end
+
   def position_match?
     if color == POSITION_MATCH_COLOR
       true

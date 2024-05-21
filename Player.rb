@@ -6,6 +6,7 @@ require_relative 'CodePeg'
 
 class Player < Utilities
   attr_accessor :secret, :guess
+  attr_reader :is_codemaker, :is_human
 
   # 4 cases
   # human codebreaker (do nothing)
@@ -14,13 +15,15 @@ class Player < Utilities
   # computer codemaker (generate pattern)
 
   def initialize(is_codemaker:, is_human:)
+    @is_codemaker = is_codemaker
+    @is_human = is_human
     super()
     if is_codemaker
       @secret = []
       if is_human
-        prompt_secret_pattern
+        build_secret_pattern
       else
-        get_random_secret_pattern
+        generate_secret_pattern
       end
     else
       @guess = []
@@ -28,38 +31,17 @@ class Player < Utilities
 
   end
 
-  def prompt_secret_pattern
-    # TODO: implementation pending
-    puts 'Input color for first secret of your secret pattern. Enter "r" to start again'
-    until pattern_complete secret
-      puts "your secret : #{secret.map { |ele| ele.color}}"
-      input = user_input
-      if input == "r"
-        #todo, development stop marker
-        reset secret
-        next
-      end
-      unless valid_user_input? input
-        puts "That is not a valid color! Please try again"
-        next
-      end
-      self.guess << CodePeg.new(input)
-    end
-    puts "final guess pattern : #{guess.map { |ele| ele.color}}"
-  end
-
-
-  def debug_get_code
-    secret.map(&:color)
+  def show_secret
+    secret.map(&:to_s)
   end
 
   def build_guess_pattern
     puts 'Input color for first guess of your guess pattern. Enter "r" to start again'
-    until pattern_complete guess
+    until pattern_complete? guess
       puts "your guesses : #{guess.map { |ele| ele.color}}"
       input = user_input
       if input == "r"
-        reset guess
+        reset_guess
         next
       end
       unless valid_user_input? input
@@ -71,7 +53,7 @@ class Player < Utilities
     puts "final guess pattern : #{guess.map { |ele| ele.color}}"
   end
 
-  def user_confirmed_guess
+  def user_confirmed?
     valid_choice = false
     until valid_choice == true
       puts "guess pattern complete, would you like to confirm? (y/n)"
@@ -86,13 +68,51 @@ class Player < Utilities
     end
   end
 
-  def reset(pattern)
-    pattern.clear
+  def reset_guess
+    guess.clear
+  end
+
+  def guess_complete?
+    pattern_complete? guess
   end
 
   private
 
-    def get_random_secret_pattern
+    def prompt_secret_pattern
+      puts 'Input color for first secret of your secret pattern. Enter "r" to start again'
+      until pattern_complete? secret
+        puts "your secret : #{secret.map { |ele| ele.color}}"
+        input = user_input
+        if input == "r"
+          reset_secret
+          next
+        end
+        unless valid_user_input? input
+          puts "That is not a valid color! Please try again"
+          next
+        end
+        self.secret << CodePeg.new(input)
+      end
+      puts "final secret pattern : #{secret.map { |ele| ele.color}}"
+    end
+
+    def build_secret_pattern
+      secret_done = false
+      until secret_done == true
+        prompt_secret_pattern
+        if user_confirmed?
+          secret_done = true
+          break
+        end
+        reset_secret
+      end
+    end
+
+    def reset_secret
+      secret.clear
+    end
+
+    def generate_secret_pattern
       self.secret = Array.new(4) { CodePeg.new(CodePeg.random_color) }
     end
 
@@ -105,7 +125,7 @@ class Player < Utilities
       end
     end
 
-    def pattern_complete(pattern)
+    def pattern_complete?(pattern)
       pattern.length == 4
     end
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'game'
+require_relative 'Game'
 
 #* plan
 # create the board
@@ -22,14 +22,13 @@ require_relative 'game'
 # if game did not end, move on to next row
 # repeat until end
 # if codebreaker has not guessed the right pattern at the end, end the game
-#* if player wants to be codemaker, prompt them for secret pattern
-#* get secret pattern from user
-#* show the user the secret pattern they entered
+# if player wants to be codemaker, prompt them for secret pattern
+# get secret pattern from user
+# show the user the secret pattern they entered
 #* implement algorithm for the computer to guess the pattern
 
 # enhancement
 #* show which row we are on right now
 
 game = Game.new
-game.introduction
 game.play
