@@ -54,17 +54,17 @@ class Game < Utilities
         clue = []
         # codemaker.derive_guess_pattern clue
         first_turn = clue.empty?
-        if first_turn
-          until codebreaker.guess_complete? codebreaker.guess
-            codebreaker.guess << CodePeg.new(CodePeg.random_color)
-          end
+        # if first_turn
+        until codebreaker.guess_complete?
+          codebreaker.guess << CodePeg.new(CodePeg.random_color)
         end
-        clue = computer(codebreaker.guess, codemaker.secret)
+        # end
+        clue = compute_clue(codebreaker.guess, codemaker.secret)
         board.add_guess(codebreaker.guess, clue)
         self.winner = determine_winner clue
         next_turn
         codebreaker.reset_guess
-        break
+
       end
     end
 
@@ -99,7 +99,7 @@ class Game < Utilities
 
     def determine_winner (clue)
       codebreaker_won = clue.count { |key_peg| key_peg.full_match? } >= 4
-      codemaker_won = turn >= 12 && !codebreaker_won?(clue)
+      codemaker_won = turn >= 12 &&  !codebreaker_won
       puts "------------ determine_winner ------------"
       puts "codebreaker_won : #{codebreaker_won}"
       puts "codemaker_won : #{codemaker_won}"
