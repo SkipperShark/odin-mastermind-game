@@ -54,7 +54,7 @@ class Game < Utilities
         clue = compute_clue(codebreaker.guess, codemaker.secret)
         board.add_guess(codebreaker.guess, clue)
         self.winner = determine_winner clue
-        solver.feed clue
+        solver.update_clue clue
         next_turn
         codebreaker.reset_guess
 

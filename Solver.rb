@@ -9,6 +9,7 @@ class Solver
   end
 
   def derive_guess(turn)
+    puts "derive guess, clue : #{clue}"
     first_turn = turn == 1 ? true : false
     if first_turn
         4.times do
@@ -24,7 +25,7 @@ class Solver
 
   end
 
-  def feed(clue)
+  def update_clue(clue)
     self.clue = clue
   end
 end
