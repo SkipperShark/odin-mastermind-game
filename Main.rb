@@ -27,6 +27,9 @@ require_relative 'Game'
 # show the user the secret pattern they entered
 #* implement algorithm for the computer to guess the pattern
 
+#>> bugs
+# when playing as the code maker, the last row's guess and clue is not shown
+
 # enhancement
 #* show which row we are on right now
 

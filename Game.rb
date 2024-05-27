@@ -4,6 +4,7 @@ require_relative 'Player'
 require_relative 'Board'
 require_relative 'KeyPeg'
 require_relative 'CodePeg'
+require_relative 'Solver'
 
 class Game < Utilities
 
@@ -44,29 +45,24 @@ class Game < Utilities
         next_turn
         codebreaker.reset_guess
       end
-      board.show
-      puts "game ended! Thanks for playing. WINNER : #{winner}"
 
-    elsif codemaker.is_human == false
+    elsif codemaker.is_human == true
+      solver = Solver.new
       while winner.nil?
         board.show
-        puts "turn : #{turn}"
-        clue = []
-        # codemaker.derive_guess_pattern clue
-        first_turn = clue.empty?
-        # if first_turn
-        until codebreaker.guess_complete?
-          codebreaker.guess << CodePeg.new(CodePeg.random_color)
-        end
-        # end
+        codebreaker.guess = solver.derive_guess(turn)
         clue = compute_clue(codebreaker.guess, codemaker.secret)
         board.add_guess(codebreaker.guess, clue)
         self.winner = determine_winner clue
+        solver.feed clue
         next_turn
         codebreaker.reset_guess
 
       end
     end
+
+    board.show
+    puts "game ended! Thanks for playing. WINNER : #{winner}"
 
   end
 
@@ -74,13 +70,6 @@ class Game < Utilities
 
     attr_accessor :winner, :guess, :turn, :clue, :board
     attr_reader :codemaker, :codebreaker
-
-    def derive_guess_pattern(clue)
-      first_turn = clue.empty?
-      if first_turn
-
-      end
-    end
 
     def player_is_codemaker
       valid_choice = false
