@@ -47,7 +47,7 @@ class Game < Utilities
       board.show
       puts "game ended! Thanks for playing. WINNER : #{winner}"
 
-    elsif codemaker.is_human == true
+    elsif codemaker.is_human == false
       while winner.nil?
         board.show
         puts "turn : #{turn}"
