@@ -21,13 +21,14 @@ class Player < Utilities
     if is_codemaker
       @secret = []
       if is_human
-        
-        #info just to make my life easier 
-        4.times do
-          @secret <<  CodePeg.new("blue")
-        end
-        
-        # build_secret_pattern
+
+        #info just to make my life easier
+        # @secret <<  CodePeg.new("red")
+        # @secret <<  CodePeg.new("green")
+        # @secret <<  CodePeg.new("blue")
+        # @secret <<  CodePeg.new("yellow")
+
+        build_secret_pattern
 
       else
         generate_secret_pattern

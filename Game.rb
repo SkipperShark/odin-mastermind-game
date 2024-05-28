@@ -48,16 +48,17 @@ class Game < Utilities
 
     elsif codemaker.is_human == true
       solver = Solver.new
+      clue = []
       while winner.nil?
+        puts "turn : #{turn}"
         board.show
-        codebreaker.guess = solver.derive_guess(turn)
+        codebreaker.guess = solver.derive_guess(clue)
         clue = compute_clue(codebreaker.guess, codemaker.secret)
         board.add_guess(codebreaker.guess, clue)
         self.winner = determine_winner clue
-        solver.update_clue clue
         next_turn
         codebreaker.reset_guess
-
+        puts "----\n\n-----"
       end
     end
 
