@@ -11,6 +11,17 @@ class Solver
   end
 
   def derive_guess(prev_turn_clue)
+    foo = prev_turn_clue
+    puts foo
+
+    possible_codes = []
+    color_options = CodePeg.color_options
+    color_options.combination(4) { |combination| possible_codes << combination }
+    pp possible_codes
+    return nil
+  end
+
+  def derive_guess_version_1(prev_turn_clue)
     puts "\n\n-----\n\n"
     puts "Color options : #{CodePeg::COLOR_OPTIONS}"
     puts "derive guess, prev_turn_clue : #{prev_turn_clue.map(&:to_s)}"

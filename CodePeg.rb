@@ -17,7 +17,12 @@ class CodePeg
     COLOR_OPTIONS.sample
   end
 
+  def self.color_options
+    COLOR_OPTIONS
+  end
+
   def to_s
     color
   end
+
 end
