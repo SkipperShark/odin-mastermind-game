@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'Game'
+require_relative './lib/Game'
 
 #* plan
 # create the board
