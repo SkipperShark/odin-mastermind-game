@@ -1,6 +1,6 @@
-class Utilities
+module Utilities
 
-  def user_input
+  def self.user_input
     gets.chomp.downcase.lstrip.rstrip
   end
 end

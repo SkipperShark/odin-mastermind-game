@@ -6,7 +6,9 @@ require_relative 'KeyPeg'
 require_relative 'CodePeg'
 require_relative 'Solver'
 
-class Game < Utilities
+class Game
+
+  include Utilities
 
   def initialize
     super

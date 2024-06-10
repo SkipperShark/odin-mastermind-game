@@ -4,7 +4,8 @@ require_relative 'Utilities'
 require_relative 'CodePeg'
 
 
-class Player < Utilities
+class Player
+  include Utilities
   attr_accessor :secret, :guess
   attr_reader :is_codemaker, :is_human
 
