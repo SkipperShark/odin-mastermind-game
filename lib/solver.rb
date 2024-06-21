@@ -1,5 +1,5 @@
-require_relative 'CodePeg'
-require_relative 'KeyPeg'
+require_relative 'code_peg'
+require_relative 'key_peg'
 
 class Solver
   attr_accessor :clue, :guess, :guess_color_index, :solution

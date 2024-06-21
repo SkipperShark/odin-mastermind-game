@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'Utilities'
-require_relative 'CodePeg'
+require_relative 'utilites'
+require_relative 'code_peg'
 
 
 class Player
