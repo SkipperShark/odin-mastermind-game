@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-require_relative 'Player'
-require_relative 'Board'
-require_relative 'KeyPeg'
-require_relative 'CodePeg'
-require_relative 'Solver'
+require_relative 'player'
+require_relative 'board'
+require_relative 'key_peg'
+require_relative 'code_peg'
+require_relative 'solver'
+require_relative 'utilites'
 
 class Game
 
