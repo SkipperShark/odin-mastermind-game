@@ -7,7 +7,6 @@ require_relative 'code_peg'
 require_relative 'solver'
 require_relative 'utilites'
 
-# represents the game being played
 class Game
 
   include Utilities

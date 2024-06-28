@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 # represents a key peg that can be placed on the feedback portion of the board
 class KeyPeg
-  FULL_MATCH_COLOR = "red".freeze
-  POSITION_MATCH_COLOR = "white".freeze
+  FULL_MATCH_COLOR = "red"
+  POSITION_MATCH_COLOR = "white"
   COLOR_OPTIONS = [FULL_MATCH_COLOR, POSITION_MATCH_COLOR].freeze
 
   private_class_method :new
@@ -12,11 +14,11 @@ class KeyPeg
   end
 
   def self.full_match
-    new(FULL_MATCH_COLOR)
+    self.new(FULL_MATCH_COLOR)
   end
 
   def self.position_match
-    new(POSITION_MATCH_COLOR)
+    self.new(POSITION_MATCH_COLOR)
   end
 
   def to_s
@@ -24,7 +26,11 @@ class KeyPeg
   end
 
   def full_match?
-    color == FULL_MATCH_COLOR
+    if color == FULL_MATCH_COLOR
+      true
+    else
+      false
+    end
   end
 
   def self.random_color
@@ -32,6 +38,10 @@ class KeyPeg
   end
 
   def position_match?
-    color == POSITION_MATCH_COLOR
+    if color == POSITION_MATCH_COLOR
+      true
+    else
+      false
+    end
   end
 end
