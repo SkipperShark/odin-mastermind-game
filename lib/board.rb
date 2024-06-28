@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # represents the mastermind board
 class Board
   attr_accessor :board
@@ -7,9 +5,15 @@ class Board
   def initialize
     @board = {
       code_rows: [],
-      decode_rows: []
+      decode_rows: [],
+      decoding_rows: [
+        {
+          decode_row: [],
+          
+        }
+      ]
     }
-    add_code_rows
+    add_code_rows()
     add_decode_rows
   end
 
@@ -35,16 +39,16 @@ class Board
 
   private
 
-    def add_code_rows
-      @board[:code_rows] = ['?', '?', '?', '?']
-    end
+  def add_code_rows
+    @board[:code_rows] = ["?", "?", "?", "?"]
+  end
 
-    def add_decode_rows
-      @board[:decode_rows] = Array.new(12) {{
-          code_pegs:  ['', '', '', ''],
-          # is_code: false,
-          key_pegs: ['','','','']
-        }}
-    end
+  def add_decode_rows
+    @board[:decode_rows] = Array.new(12) {{
+        code_pegs:  ['', '', '', ''],
+        # is_code: false,
+        key_pegs: ['','','','']
+      }}
+  end
 
 end
