@@ -25,6 +25,11 @@ require_relative 'lib/game'
 # if player wants to be codemaker, prompt them for secret pattern
 # get secret pattern from user
 # show the user the secret pattern they entered
+
+# todo Object oriented refactoring
+# todo refactor classes, max 100 lines
+# todo use small objects
+
 #* implement algorithm for the computer to guess the pattern
 
 #>> bugs

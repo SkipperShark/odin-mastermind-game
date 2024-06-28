@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # represents the mastermind board
 class Board
   attr_accessor :board
