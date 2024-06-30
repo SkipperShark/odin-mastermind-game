@@ -6,7 +6,7 @@ class Board
   attr_accessor :board
 
   def initialize
-    @board = Array.new(12) do
+    @board_rows = Array.new(12) do
       {
         guess: Guess.new,
         clue: Clue.new
@@ -16,15 +16,10 @@ class Board
 
   def show
     puts "Guesses\t\t\t\t\t\t\tClues"
-    # p @board
-    @board.each do |row|
-      row[:guess].display
-      print "\t\t\t\t|\t"
-      row[:clue].display
-      puts ""
-    end
+    @board_rows.each { |row| display row}
   end
 
+  #todo to be refactored
   def add_guess(guess_pattern, clue_pattern)
     # puts "guess_pattern : #{guess_pattern}"
     row_index = self.board[:decode_rows].rindex { |row| row[:code_pegs].all?("") }
@@ -35,5 +30,14 @@ class Board
     clue_pattern.each_index do |i|
       self.board[:decode_rows][row_index][:key_pegs][i] = clue_pattern[i]
     end
+  end
+
+  private
+
+  def display(row)
+    row[:guess].display
+    print "\t\t\t\t|\t"
+    row[:clue].display
+    puts ""
   end
 end

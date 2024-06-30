@@ -1,19 +1,18 @@
-# frozen_string_literal: true
+require_relative "player"
+require_relative "board"
+require_relative "key_peg"
+require_relative "code_peg"
+require_relative "solver"
+require_relative "utilites"
 
-require_relative 'player'
-require_relative 'board'
-require_relative 'key_peg'
-require_relative 'code_peg'
-require_relative 'solver'
-require_relative 'utilites'
-
+#todo the actual game backend, this is to be refactored like hell
 class Game
 
   include Utilities
 
   def initialize
     super
-    @board = Board.new
+    @board_rows = Board.new
     @winner = nil
     @turn = 1
 
@@ -72,75 +71,75 @@ class Game
 
   private
 
-    attr_accessor :winner, :guess, :turn, :clue, :board
-    attr_reader :codemaker, :codebreaker
+  attr_accessor :winner, :guess, :turn, :clue, :board
+  attr_reader :codemaker, :codebreaker
 
-    def player_is_codemaker
-      valid_choice = false
-      until valid_choice == true
-        puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker"
-        input = user_input
-        if input == "y"
-          return true
-        elsif input == "n"
-          return false
-        else
-          puts "I'm not sure what you mean, please try again"
+  def player_is_codemaker
+    valid_choice = false
+    until valid_choice == true
+      puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker"
+      input = user_input
+      if input == "y"
+        return true
+      elsif input == "n"
+        return false
+      else
+        puts "I'm not sure what you mean, please try again"
+      end
+    end
+  end
+
+  def determine_winner (clue)
+    codebreaker_won = clue.count { |code_peg| code_peg.full_match? } >= 4
+    codemaker_won = turn >= 12 &&  !codebreaker_won
+    puts "------------ determine_winner ------------"
+    puts "codebreaker_won : #{codebreaker_won}"
+    puts "codemaker_won : #{codemaker_won}"
+    if codebreaker_won == true
+      return "codebreaker"
+    elsif codemaker_won == true
+      return "codemaker"
+    end
+    return nil
+  end
+
+  def next_turn
+    self.turn += 1
+  end
+
+  def compute_clue(guess, secret)
+    secret_pattern = secret.clone.map(&:to_s)
+    guess_pattern = guess.clone.map(&:to_s)
+    clue = []
+
+    # find color and position matches
+    guess_pattern.each.with_index do |guess_color, i|
+      secret_pattern.each.with_index do |secret_color, y|
+        if guess_color == secret_color and i == y
+          clue << KeyPeg.full_match
+          guess_pattern[i] = nil
+          secret_pattern[y] = nil
+          break
+        end
+      end
+    end
+    guess_pattern.compact!
+    secret_pattern.compact!
+
+    # find position matches only
+    guess_pattern.each.with_index do |guess_color, i|
+      secret_pattern.each.with_index do |secret_color, y|
+        if guess_color == secret_color
+          clue << KeyPeg.position_match
+          guess_pattern[i] = nil
+          secret_pattern[y] = nil
+          break
         end
       end
     end
 
-    def determine_winner (clue)
-      codebreaker_won = clue.count { |code_peg| code_peg.full_match? } >= 4
-      codemaker_won = turn >= 12 &&  !codebreaker_won
-      puts "------------ determine_winner ------------"
-      puts "codebreaker_won : #{codebreaker_won}"
-      puts "codemaker_won : #{codemaker_won}"
-      if codebreaker_won == true
-        return "codebreaker"
-      elsif codemaker_won == true
-        return "codemaker"
-      end
-      return nil
-    end
-
-    def next_turn
-      self.turn += 1
-    end
-
-    def compute_clue(guess, secret)
-      secret_pattern = secret.clone.map(&:to_s)
-      guess_pattern = guess.clone.map(&:to_s)
-      clue = []
-
-      # find color and position matches
-      guess_pattern.each.with_index do |guess_color, i|
-        secret_pattern.each.with_index do |secret_color, y|
-          if guess_color == secret_color and i == y
-            clue << KeyPeg.full_match
-            guess_pattern[i] = nil
-            secret_pattern[y] = nil
-            break
-          end
-        end
-      end
-      guess_pattern.compact!
-      secret_pattern.compact!
-
-      # find position matches only
-      guess_pattern.each.with_index do |guess_color, i|
-        secret_pattern.each.with_index do |secret_color, y|
-          if guess_color == secret_color
-            clue << KeyPeg.position_match
-            guess_pattern[i] = nil
-            secret_pattern[y] = nil
-            break
-          end
-        end
-      end
-
-      guess_pattern.compact!
-      secret_pattern.compact!
-      return clue
-    end
+    guess_pattern.compact!
+    secret_pattern.compact!
+    return clue
+  end
 end
