@@ -1,19 +1,24 @@
-# represents the mastermind board
+require_relative "guess"
+require_relative "clue"
+
+# represents the mastermind board, which includes guess rows and feedback rows
 class Board
   attr_accessor :board
 
   def initialize
-    @board = {
-      code_rows: [],
-      decode_rows: [],
-      decoding_rows: [
-        {
-          decode_row: [],
-          
-        }
-      ]
-    }
-    add_code_rows()
+    # @board = Array.new(12) do
+    #   {
+    #     guesses: Guess.new,
+    #     clues: Clue.new
+    #   }
+    # end
+    @board = Array.new(12) do
+      {
+        guesses: ["", "", "", ""],
+        clues: ["", "", "", ""]
+      }
+    end
+    add_code_rows
     add_decode_rows
   end
 
@@ -44,11 +49,9 @@ class Board
   end
 
   def add_decode_rows
-    @board[:decode_rows] = Array.new(12) {{
-        code_pegs:  ['', '', '', ''],
-        # is_code: false,
-        key_pegs: ['','','','']
+    @board = Array.new(12) {{
+        guesses:  ['', '', '', ''],
+        feedback: ['','','','']
       }}
   end
-
 end
