@@ -6,27 +6,22 @@ class Board
   attr_accessor :board
 
   def initialize
-    # @board = Array.new(12) do
-    #   {
-    #     guesses: Guess.new,
-    #     clues: Clue.new
-    #   }
-    # end
     @board = Array.new(12) do
       {
-        guesses: ["", "", "", ""],
-        clues: ["", "", "", ""]
+        guess: Guess.new,
+        clue: Clue.new
       }
     end
-    add_code_rows
-    add_decode_rows
   end
 
   def show
-    puts "Code Pegs\t\t\t\t\t\tKey Pegs"
-    p @board[:code_rows]
-    @board[:decode_rows].each do |row|
-      puts "#{row[:code_pegs].map(&:to_s)}\t\t\t\t|\t#{row[:key_pegs].map(&:to_s)}"
+    puts "Guesses\t\t\t\t\t\t\tClues"
+    # p @board
+    @board.each do |row|
+      row[:guess].display
+      print "\t\t\t\t|\t"
+      row[:clue].display
+      puts ""
     end
   end
 
@@ -40,18 +35,5 @@ class Board
     clue_pattern.each_index do |i|
       self.board[:decode_rows][row_index][:key_pegs][i] = clue_pattern[i]
     end
-  end
-
-  private
-
-  def add_code_rows
-    @board[:code_rows] = ["?", "?", "?", "?"]
-  end
-
-  def add_decode_rows
-    @board = Array.new(12) {{
-        guesses:  ['', '', '', ''],
-        feedback: ['','','','']
-      }}
   end
 end

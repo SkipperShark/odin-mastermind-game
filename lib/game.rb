@@ -91,7 +91,7 @@ class Game
     end
 
     def determine_winner (clue)
-      codebreaker_won = clue.count { |key_peg| key_peg.full_match? } >= 4
+      codebreaker_won = clue.count { |code_peg| code_peg.full_match? } >= 4
       codemaker_won = turn >= 12 &&  !codebreaker_won
       puts "------------ determine_winner ------------"
       puts "codebreaker_won : #{codebreaker_won}"
