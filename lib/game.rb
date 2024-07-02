@@ -5,7 +5,7 @@ require_relative "code_peg"
 require_relative "solver"
 require_relative "utilites"
 
-#todo the actual game backend, this is to be refactored like hell
+# game engine/driver
 class Game
   include Utilities
 
@@ -13,7 +13,7 @@ class Game
     @board = Board.new
     @winner = nil
     @turn = 1
-    print_intro_message
+    game_start_message
 
     codemaker_is_human = codemaker_human?
     codebreaker_is_human = !codebreaker_is_human
@@ -25,7 +25,8 @@ class Game
   def play
     puts "\n\nGame Start!\n\n"
     puts "secret code : #{@codemaker.show_secret}\n\n"
-    if codebreaker.is_human == true
+
+    if codebreaker.is_human
       while winner.nil?
         board.show
         puts "turn : #{turn}"
@@ -59,7 +60,6 @@ class Game
 
     board.show
     puts "game ended! Thanks for playing. WINNER : #{winner}"
-
   end
 
   private
@@ -67,7 +67,7 @@ class Game
   attr_accessor :winner, :guess, :turn, :clue, :board
   attr_reader :codemaker, :codebreaker
 
-  def print_intro_message
+  def game_start_message
     puts "Welcome to mastermind\n\n"
     puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
     print "\n"

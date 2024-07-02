@@ -17,7 +17,7 @@ class Player
   def initialize(is_codemaker:, is_human:)
     @is_codemaker = is_codemaker
     @is_human = is_human
-    super()
+    # super()
     if is_codemaker
       @secret = []
       if is_human
@@ -38,11 +38,11 @@ class Player
     end
   end
 
-  def self.codebreaker(is_human:)
+  def self.codebreaker(is_human)
     new(is_codemaker: false, is_human:)
   end
 
-  def self.codemaker(is_human:)
+  def self.codemaker(is_human)
     new(is_codemaker: true, is_human:)
   end
 
