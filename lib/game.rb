@@ -7,26 +7,19 @@ require_relative "utilites"
 
 #todo the actual game backend, this is to be refactored like hell
 class Game
-
   include Utilities
 
   def initialize
-    super
-    @board_rows = Board.new
+    @board = Board.new
     @winner = nil
     @turn = 1
+    print_intro_message
 
-    puts "Welcome to mastermind\n\n"
-    puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
-    print "\n"
+    codemaker_is_human = codemaker_human?
+    codebreaker_is_human = !codebreaker_is_human
 
-    if player_is_codemaker
-      @codemaker = Player.new(is_codemaker: true, is_human: true)
-      @codebreaker = Player.new(is_codemaker: false, is_human: false)
-    else
-      @codemaker = Player.new(is_codemaker: true, is_human: false)
-      @codebreaker = Player.new(is_codemaker: false, is_human: true)
-    end
+    @codemaker = Player.codemaker(codemaker_is_human)
+    @codebreaker = Player.codebreaker(codebreaker_is_human)
   end
 
   def play
@@ -74,7 +67,13 @@ class Game
   attr_accessor :winner, :guess, :turn, :clue, :board
   attr_reader :codemaker, :codebreaker
 
-  def player_is_codemaker
+  def print_intro_message
+    puts "Welcome to mastermind\n\n"
+    puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
+    print "\n"
+  end
+
+  def codemaker_human?
     valid_choice = false
     until valid_choice == true
       puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker"

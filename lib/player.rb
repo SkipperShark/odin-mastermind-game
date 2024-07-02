@@ -1,9 +1,8 @@
-# frozen_string_literal: true
+require_relative "utilites"
+require_relative "code_peg"
 
-require_relative 'utilites'
-require_relative 'code_peg'
-
-
+# Represents a player, which can either be a codemaker or a codebreaker
+# Players can be human or computer
 class Player
   include Utilities
   attr_accessor :secret, :guess
@@ -37,7 +36,14 @@ class Player
     else
       @guess = []
     end
+  end
 
+  def self.codebreaker(is_human:)
+    new(is_codemaker: false, is_human:)
+  end
+
+  def self.codemaker(is_human:)
+    new(is_codemaker: true, is_human:)
   end
 
   def show_secret
