@@ -45,23 +45,24 @@ class Game
     #     next_turn
     #     codebreaker.reset_guess
     #   end
-    if codebreaker.is_human == true
-      while winner.nil?
-        board.show
-        puts "turn : #{turn}"
-        codebreaker.build_guess
-        unless codebreaker.user_confirmed?
-          codebreaker.reset_guess
-          next
-        end
-        clue = compute_clue(codebreaker.guess, codemaker.secret)
-        board.add_guess(codebreaker.guess, clue)
-        self.winner = determine_winner clue
-        next_turn
-        codebreaker.reset_guess
-      end
+    # if codebreaker.is_human == true
+    #   while winner.nil?
+    #     board.show
+    #     puts "turn : #{turn}"
+    #     codebreaker.build_guess
+    #     unless codebreaker.confirm_guess?
+    #       codebreaker.reset_guess
+    #       next
+    #     end
+    #     clue = compute_clue(codebreaker.guess, codemaker.secret)
+    #     board.add_guess(codebreaker.guess, clue)
+    #     self.winner = determine_winner clue
+    #     next_turn
+    #     codebreaker.reset_guess
+    #   end
 
-    elsif codemaker.is_human == true
+    # elsif codemaker.is_human == true
+    if codemaker.is_human == true
       solver = Solver.new
       clue = []
       while winner.nil?

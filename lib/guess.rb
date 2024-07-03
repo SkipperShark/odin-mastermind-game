@@ -10,7 +10,6 @@ class Guess
   end
 
   def display
-    # return if no_code_pegs
     @code_pegs.map do |code_peg|
       print code_peg.nil? ? "_ " : "#{code_peg} "
     end
@@ -21,6 +20,10 @@ class Guess
     prompt_code_peg_choice until guess_complete?
     print "final guess pattern : "
     display
+  end
+
+  def reset
+    self.code_pegs = empty_guess
   end
 
   private
@@ -38,10 +41,6 @@ class Guess
     else
       puts "That is not a valid color! Please try again"
     end
-  end
-
-  def reset_guess
-    self.code_pegs = empty_guess
   end
 
   def empty_guess
@@ -63,8 +62,4 @@ class Guess
     display
     puts ""
   end
-
-  # def no_code_pegs
-  #   @code_pegs.all?(&:nil?)
-  # end
 end
