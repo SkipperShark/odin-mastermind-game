@@ -4,8 +4,10 @@ require_relative "key_peg"
 require_relative "code_peg"
 require_relative "solver"
 require_relative "utilites"
+require_relative "codebreaker"
 
-# game engine/driver
+# main game engine/driver, contains the turn logic, game end condition logic,
+# and core game logic
 class Game
   include Utilities
 
@@ -18,19 +20,36 @@ class Game
     codemaker_is_human = codemaker_human?
     codebreaker_is_human = !codebreaker_is_human
 
+    # @codemaker = Player.codemaker(codemaker_is_human)
+    # @codebreaker = Player.codebreaker(codebreaker_is_human)
     @codemaker = Player.codemaker(codemaker_is_human)
-    @codebreaker = Player.codebreaker(codebreaker_is_human)
+    @codebreaker = Codebreaker.new(codebreaker_is_human)
   end
 
   def play
     puts "\n\nGame Start!\n\n"
     puts "secret code : #{@codemaker.show_secret}\n\n"
 
-    if codebreaker.is_human
+    # if codebreaker.is_human
+    #   while winner.nil?
+    #     board.show
+    #     puts "turn : #{turn}"
+    #     codebreaker.build_guess_pattern
+    #     unless codebreaker.user_confirmed?
+    #       codebreaker.reset_guess
+    #       next
+    #     end
+    #     clue = compute_clue(codebreaker.guess, codemaker.secret)
+    #     board.add_guess(codebreaker.guess, clue)
+    #     self.winner = determine_winner clue
+    #     next_turn
+    #     codebreaker.reset_guess
+    #   end
+    if codebreaker.is_human == true
       while winner.nil?
         board.show
         puts "turn : #{turn}"
-        codebreaker.build_guess_pattern
+        codebreaker.build_guess
         unless codebreaker.user_confirmed?
           codebreaker.reset_guess
           next

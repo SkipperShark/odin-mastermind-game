@@ -38,9 +38,9 @@ class Player
     end
   end
 
-  def self.codebreaker(is_human)
-    new(is_codemaker: false, is_human:)
-  end
+  # def self.codebreaker(is_human)
+  #   new(is_codemaker: false, is_human:)
+  # end
 
   def self.codemaker(is_human)
     new(is_codemaker: true, is_human:)
@@ -50,46 +50,46 @@ class Player
     secret.map(&:to_s)
   end
 
-  def build_guess_pattern
-    puts 'Input color for first guess of your guess pattern. Enter "r" to start again'
-    until pattern_complete? guess
-      puts "your guesses : #{guess.map { |ele| ele.color}}"
-      input = user_input
-      if input == "r"
-        reset_guess
-        next
-      end
-      unless valid_user_input? input
-        puts "That is not a valid color! Please try again"
-        next
-      end
-      self.guess << CodePeg.new(input)
-    end
-    puts "final guess pattern : #{guess.map { |ele| ele.color}}"
-  end
+  # def build_guess_pattern
+  #   puts 'Input color for first guess of your guess pattern. Enter "r" to start again'
+  #   until pattern_complete? guess
+  #     puts "your guesses : #{guess.map { |ele| ele.color}}"
+  #     input = user_input
+  #     if input == "r"
+  #       reset_guess
+  #       next
+  #     end
+  #     unless valid_user_input? input
+  #       puts "That is not a valid color! Please try again"
+  #       next
+  #     end
+  #     self.guess << CodePeg.new(input)
+  #   end
+  #   puts "final guess pattern : #{guess.map { |ele| ele.color}}"
+  # end
 
-  def user_confirmed?
-    valid_choice = false
-    until valid_choice == true
-      puts "guess pattern complete, would you like to confirm? (y/n)"
-      input = user_input
-      if input == "y"
-        return true
-      elsif input == "n"
-        return false
-      else
-        puts "I'm not sure what you mean, please try again"
-      end
-    end
-  end
+  # def user_confirmed?
+  #   valid_choice = false
+  #   until valid_choice == true
+  #     puts "guess pattern complete, would you like to confirm? (y/n)"
+  #     input = user_input
+  #     if input == "y"
+  #       return true
+  #     elsif input == "n"
+  #       return false
+  #     else
+  #       puts "I'm not sure what you mean, please try again"
+  #     end
+  #   end
+  # end
 
-  def reset_guess
-    guess.clear
-  end
+  # def reset_guess
+  #   guess.clear
+  # end
 
-  def guess_complete?
-    pattern_complete? guess
-  end
+  # def guess_complete?
+  #   pattern_complete? guess
+  # end
 
   private
 

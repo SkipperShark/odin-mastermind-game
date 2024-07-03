@@ -7,8 +7,8 @@ class KeyPeg
   private_class_method :new
   attr_reader :color
 
-  def initialize(color_option)
-    @color = color_option
+  def initialize(color)
+    @color = color
   end
 
   def self.full_match
