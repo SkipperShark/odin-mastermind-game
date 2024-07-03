@@ -1,4 +1,5 @@
 require_relative "utilites"
+require_relative "code_peg"
 
 # Represents a row on the board containing code peg guesses. Also contains
 # functionality to build and manipulate a guess
@@ -15,28 +16,9 @@ class Guess
     end
   end
 
-  def build_guess_pattern
-    puts  "Input color for first guess of your guess pattern.
-          Enter 'r' to start again"
-    until guess_complete?
-      # puts "your guesses : #{guess.map { |ele| ele.color}}"
-      display
-      input = user_input
-      if input == "r"
-        reset_guess
-        next
-      end
-
-
-      #todo valid user input is not defined here, it should be a code peg method
-      unless valid_user_input? input
-        puts "That is not a valid color! Please try again"
-        next
-      end
-      color = input
-      add_code_peg_to_guess color
-    end
-    # puts "final guess pattern : #{guess.map { |ele| ele.color}}"
+  def build
+    puts "Input color for first guess of your guess pattern. Enter 'r' to start again"
+    prompt_code_peg_choice until guess_complete?
     print "final guess pattern : "
     display
   end
@@ -44,6 +26,19 @@ class Guess
   private
 
   attr_accessor :code_pegs
+
+  def prompt_code_peg_choice
+    display_current_guess
+    input = user_input
+
+    if input == "r"
+      reset_guess
+    elsif CodePeg.valid_color? input
+      add_code_peg_to_guess input
+    else
+      puts "That is not a valid color! Please try again"
+    end
+  end
 
   def reset_guess
     self.code_pegs = empty_guess
@@ -61,6 +56,12 @@ class Guess
     return if guess_complete?
 
     code_pegs[code_pegs.index nil] = CodePeg.new(color)
+  end
+
+  def display_current_guess
+    print "Your guess : "
+    display
+    puts ""
   end
 
   # def no_code_pegs

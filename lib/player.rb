@@ -128,17 +128,17 @@ class Player
     end
 
     def generate_secret_pattern
-      self.secret = Array.new(4) { CodePeg.new(CodePeg.random_color) }
+      self.secret = Array.new(4) { CodePeg.random_color }
     end
 
-    def valid_user_input?(user_input)
-      begin
-        CodePeg.new user_input
-        true
-      rescue ArgumentError
-        false
-      end
-    end
+    # def valid_user_input?(user_input)
+    #   begin
+    #     CodePeg.new user_input
+    #     true
+    #   rescue ArgumentError
+    #     false
+    #   end
+    # end
 
     def pattern_complete?(pattern)
       pattern.length == 4

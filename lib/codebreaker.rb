@@ -11,6 +11,6 @@ class Codebreaker
   end
 
   def build_guess
-    @guess.build_guess_pattern
+    @guess.build
   end
 end
