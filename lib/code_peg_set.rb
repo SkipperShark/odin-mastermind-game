@@ -1,4 +1,4 @@
-require_relative "code_peg"
+require_relative "peg_types/code_peg"
 require_relative "peg_set"
 
 # represents a set of code pegs, which may either be a guess or a secret
