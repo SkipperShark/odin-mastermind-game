@@ -12,9 +12,15 @@ class CodePegSet < PegSet
   def build
     puts "Input color for your first code peg. Enter 'r' to start again"
     prompt_code_peg_choice until complete?
-    print "final : "
-    display
-    puts ""
+    print "final : #{self}"
+    # display
+    # puts ""
+  end
+
+  def generate
+    pegs.each do
+      add_to_set(CodePeg.random_color)
+    end
   end
 
   private

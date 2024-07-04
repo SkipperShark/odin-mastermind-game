@@ -28,7 +28,7 @@ class Game
 
   def play
     puts "\n\nGame Start!\n\n"
-    puts "secret code : #{@codemaker.show_secret}\n\n"
+    # puts "secret code : #{@codemaker.show_secret}\n\n"
 
     # if codebreaker.is_human
     #   while winner.nil?
@@ -46,6 +46,9 @@ class Game
     #     codebreaker.reset_guess
     #   end
     if codebreaker.is_human == true
+      codemaker.generate_secret
+      codemaker.show_secret
+
       while winner.nil?
         board.show
         puts "turn : #{turn}"

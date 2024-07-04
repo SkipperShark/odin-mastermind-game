@@ -15,13 +15,23 @@ class Codemaker
   def build_secret
     secret_done = false
     until secret_done
-      @guess.build
+      secret.build
       secret_done = true if confirm_secret?
       reset_secret
     end
   end
 
+  def generate_secret
+    secret.generate
+  end
+
+  def show_secret
+    puts "secret : #{secret}\n\n"
+  end
+
   private
+
+  attr_reader :secret
 
   def confirm_secret?
     user_confirmed? "Secret complete, would you like to confirm? (y/n)"

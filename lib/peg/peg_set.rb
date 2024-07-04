@@ -10,10 +10,15 @@ class PegSet
     @pegs = empty
   end
 
+  #todo to see if i can remove this
   def display
     @pegs.map do |peg|
       print peg.nil? ? "_ " : "#{peg} "
     end
+  end
+
+  def to_s
+    @pegs.map { |peg| peg.nil? ? "_ " : "#{peg} " }.join
   end
 
   def reset

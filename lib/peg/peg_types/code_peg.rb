@@ -11,7 +11,7 @@ class CodePeg
   end
 
   def self.random_color
-    new(COLOR_OPTIONS.sample)
+    COLOR_OPTIONS.sample
   end
 
   def self.color_options
