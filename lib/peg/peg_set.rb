@@ -10,19 +10,12 @@ class PegSet
     @pegs = empty
   end
 
-  #todo to see if i can remove this
-  def display
-    @pegs.map do |peg|
-      print peg.nil? ? "_ " : "#{peg} "
-    end
-  end
-
   def to_s
     @pegs.map { |peg| peg.nil? ? "_ " : "#{peg} " }.join
   end
 
   def reset
-    self.code_pegs = empty
+    self.pegs = empty
   end
 
   def complete?
@@ -36,8 +29,6 @@ class PegSet
   end
 
   def display_current_set
-    print "Your set : "
-    display
-    puts ""
+    put "Your set : #{self}"
   end
 end

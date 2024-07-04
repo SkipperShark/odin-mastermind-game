@@ -143,7 +143,7 @@ class Game
     # find color and position matches
     guess_pattern.each.with_index do |guess_color, i|
       secret_pattern.each.with_index do |secret_color, y|
-        if guess_color == secret_color and i == y
+        if (guess_color == secret_color) && (i == y)
           clue << KeyPeg.full_match
           guess_pattern[i] = nil
           secret_pattern[y] = nil
@@ -168,6 +168,6 @@ class Game
 
     guess_pattern.compact!
     secret_pattern.compact!
-    return clue
+    clue
   end
 end
