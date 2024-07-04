@@ -6,6 +6,16 @@ class KeyPegSet < PegSet
     super
   end
 
+  def add_position_match
+    add_to_set(KeyPeg.position_match)
+  end
+
+  def add_full_match
+    add_to_set(KeyPeg.full_match)
+  end
+
+  private
+
   def add_to_set(color)
     return if complete?
 
