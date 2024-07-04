@@ -45,41 +45,40 @@ class Game
     #     next_turn
     #     codebreaker.reset_guess
     #   end
-    # if codebreaker.is_human == true
-    #   while winner.nil?
-    #     board.show
-    #     puts "turn : #{turn}"
-    #     codebreaker.build_guess
-    #     unless codebreaker.confirm_guess?
-    #       codebreaker.reset_guess
-    #       next
-    #     end
-    #     clue = compute_clue(codebreaker.guess, codemaker.secret)
-    #     board.add_guess(codebreaker.guess, clue)
-    #     self.winner = determine_winner clue
-    #     next_turn
-    #     codebreaker.reset_guess
-    #   end
-
-    # elsif codemaker.is_human == true
-    if codemaker.is_human == true
-      solver = Solver.new
-      clue = []
+    if codebreaker.is_human == true
       while winner.nil?
-        puts "turn : #{turn}"
         board.show
-        codebreaker.guess = solver.derive_guess(clue)
+        puts "turn : #{turn}"
+        codebreaker.build_guess
         clue = compute_clue(codebreaker.guess, codemaker.secret)
         board.add_guess(codebreaker.guess, clue)
         self.winner = determine_winner clue
         next_turn
         codebreaker.reset_guess
-        puts "----\n\n-----"
       end
     end
 
+    #todo to be done later as this is more complex
+    # elsif codemaker.is_human == true
+    # if codemaker.is_human == true
+    #   solver = Solver.new
+    #   clue = []
+    #   while winner.nil?
+    #     puts "turn : #{turn}"
+    #     board.show
+    #     codebreaker.guess = solver.derive_guess(clue)
+    #     clue = compute_clue(codebreaker.guess, codemaker.secret)
+    #     board.add_guess(codebreaker.guess, clue)
+    #     self.winner = determine_winner clue
+    #     next_turn
+    #     codebreaker.reset_guess
+    #     puts "----\n\n-----"
+    #   end
+    # end
+
     board.show
     puts "game ended! Thanks for playing. WINNER : #{winner}"
+
   end
 
   private

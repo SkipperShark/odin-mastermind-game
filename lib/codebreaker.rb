@@ -1,4 +1,5 @@
-require_relative "guess"
+# require_relative "guess"
+require_relative "code_peg_set"
 
 # Represents a player that is a codebreaker, contains logic and methods that
 # describe what the codebreaker can do, such as building the guess pattern
@@ -9,11 +10,16 @@ class Codebreaker
 
   def initialize(is_human)
     @is_human = is_human
-    @guess = Guess.new
+    @guess = CodePegSet.new
   end
 
   def build_guess
-    @guess.build
+    guess_done = false
+    until guess_done
+      @guess.build
+      guess_done = true if confirm_guess?
+      reset_guess
+    end
   end
 
   def confirm_guess?

@@ -8,7 +8,7 @@ class Board
   def initialize
     @board_rows = Array.new(12) do
       {
-        guess: Guess.new,
+        guess: CodePegSet.new,
         clue: Clue.new
       }
     end
