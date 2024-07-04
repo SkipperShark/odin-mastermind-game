@@ -5,6 +5,7 @@ require_relative "solver"
 require_relative "utilites"
 require_relative "codebreaker"
 require_relative "codemaker"
+require_relative "peg/peg_types/key_peg"
 
 # main game engine/driver, contains the turn logic, game end condition logic,
 # and core game logic
@@ -135,16 +136,53 @@ class Game
     self.turn += 1
   end
 
+  # def compute_clue(guess, secret)
+  #   secret_pattern = secret.clone.map(&:to_s)
+  #   guess_pattern = guess.clone.map(&:to_s)
+  #   clue = []
+
+  #   # find color and position matches
+  #   guess_pattern.each.with_index do |guess_color, i|
+  #     secret_pattern.each.with_index do |secret_color, y|
+  #       if (guess_color == secret_color) && (i == y)
+  #         clue << KeyPeg.full_match
+  #         guess_pattern[i] = nil
+  #         secret_pattern[y] = nil
+  #         break
+  #       end
+  #     end
+  #   end
+  #   guess_pattern.compact!
+  #   secret_pattern.compact!
+
+  #   # find position matches only
+  #   guess_pattern.each.with_index do |guess_color, i|
+  #     secret_pattern.each.with_index do |secret_color, y|
+  #       if guess_color == secret_color
+  #         clue << KeyPeg.position_match
+  #         guess_pattern[i] = nil
+  #         secret_pattern[y] = nil
+  #         break
+  #       end
+  #     end
+  #   end
+
+  #   guess_pattern.compact!
+  #   secret_pattern.compact!
+  #   clue
+  # end
   def compute_clue(guess, secret)
-    secret_pattern = secret.clone.map(&:to_s)
-    guess_pattern = guess.clone.map(&:to_s)
-    clue = []
+    # secret_pattern = secret.clone.map(&:to_s)
+    # guess_pattern = guess.clone.map(&:to_s)
+    clue = KeyPegSet.new.map do |key_peg|
+       key_peg.is_mat
+    end
 
     # find color and position matches
-    guess_pattern.each.with_index do |guess_color, i|
-      secret_pattern.each.with_index do |secret_color, y|
-        if (guess_color == secret_color) && (i == y)
-          clue << KeyPeg.full_match
+    guess.each.with_index do |guess_code_peg, i|
+      secret.each.with_index do |secret_code_peg, y|
+        if (guess_code_peg.color == secret_code_peg.color) && (i == y)
+          clue.add_full_match
           guess_pattern[i] = nil
           secret_pattern[y] = nil
           break
@@ -156,8 +194,8 @@ class Game
 
     # find position matches only
     guess_pattern.each.with_index do |guess_color, i|
-      secret_pattern.each.with_index do |secret_color, y|
-        if guess_color == secret_color
+      secret_pattern.each.with_index do |secret_code_peg, y|
+        if guess_color == secret_code_peg
           clue << KeyPeg.position_match
           guess_pattern[i] = nil
           secret_pattern[y] = nil
