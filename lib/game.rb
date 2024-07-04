@@ -1,11 +1,10 @@
-require_relative "player/player"
 require_relative "board"
-require_relative "key_peg"
-require_relative "code_peg"
+# require_relative "key_peg"
+# require_relative "code_peg"
 require_relative "solver"
 require_relative "utilites"
-require_relative "player_types/codebreaker"
-require_relative "player_types/codemaker"
+require_relative "codebreaker"
+require_relative "codemaker"
 
 # main game engine/driver, contains the turn logic, game end condition logic,
 # and core game logic

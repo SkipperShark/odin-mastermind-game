@@ -1,3 +1,5 @@
+require_relative "../utilites"
+
 # represents a set of pegs, which may either be code pegs or key pegs
 class PegSet
   include Utilities

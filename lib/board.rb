@@ -1,7 +1,7 @@
-require_relative "guess"
-require_relative "clue"
+require_relative "peg/code_peg_set"
+require_relative "peg/key_peg_set"
 
-# represents the mastermind board, which includes guess rows and feedback rows
+# represents the mastermind board, which includes guess rows and clue rows
 class Board
   attr_accessor :board
 
@@ -9,7 +9,7 @@ class Board
     @board_rows = Array.new(12) do
       {
         guess: CodePegSet.new,
-        clue: Clue.new
+        clue: KeyPegSet.new
       }
     end
   end
@@ -19,18 +19,18 @@ class Board
     @board_rows.each { |row| display row}
   end
 
-  #todo to be refactored
-  def add_guess(guess_pattern, clue_pattern)
-    # puts "guess_pattern : #{guess_pattern}"
-    row_index = self.board[:decode_rows].rindex { |row| row[:code_pegs].all?("") }
-    # puts "row_index : #{row_index}}"
-    return if row_index.nil?
-    self.board[:decode_rows][row_index][:code_pegs] = guess_pattern.clone
+  # #todo to be refactored
+  # def add_guess(guess_pattern, clue_pattern)
+  #   # puts "guess_pattern : #{guess_pattern}"
+  #   row_index = self.board[:decode_rows].rindex { |row| row[:code_pegs].all?("") }
+  #   # puts "row_index : #{row_index}}"
+  #   return if row_index.nil?
+  #   self.board[:decode_rows][row_index][:code_pegs] = guess_pattern.clone
 
-    clue_pattern.each_index do |i|
-      self.board[:decode_rows][row_index][:key_pegs][i] = clue_pattern[i]
-    end
-  end
+  #   clue_pattern.each_index do |i|
+  #     self.board[:decode_rows][row_index][:key_pegs][i] = clue_pattern[i]
+  #   end
+  # end
 
   private
 
