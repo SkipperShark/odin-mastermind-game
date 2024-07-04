@@ -22,6 +22,8 @@ class Codebreaker
     end
   end
 
+  private
+
   def confirm_guess?
     user_confirmed? "Guess complete, would you like to confirm? (y/n)"
   end

@@ -7,8 +7,8 @@ class Clue
   def display
     # return if no_key_pegs
 
-    @key_pegs.map do |code_peg|
-      print code_peg.nil? ? "_ " : "#{code_peg} "
+    @key_pegs.map do |key_peg|
+      print key_peg.nil? ? "_ " : "#{key_peg} "
     end
   end
 

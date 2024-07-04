@@ -5,6 +5,7 @@ require_relative "code_peg"
 require_relative "solver"
 require_relative "utilites"
 require_relative "codebreaker"
+require_relative "codemaker"
 
 # main game engine/driver, contains the turn logic, game end condition logic,
 # and core game logic
@@ -22,7 +23,7 @@ class Game
 
     # @codemaker = Player.codemaker(codemaker_is_human)
     # @codebreaker = Player.codebreaker(codebreaker_is_human)
-    @codemaker = Player.codemaker(codemaker_is_human)
+    @codemaker = Codemaker.new(codemaker_is_human)
     @codebreaker = Codebreaker.new(codebreaker_is_human)
   end
 
@@ -50,7 +51,14 @@ class Game
         board.show
         puts "turn : #{turn}"
         codebreaker.build_guess
+
+
+
         clue = compute_clue(codebreaker.guess, codemaker.secret)
+
+
+
+
         board.add_guess(codebreaker.guess, clue)
         self.winner = determine_winner clue
         next_turn
