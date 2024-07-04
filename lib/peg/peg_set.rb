@@ -29,6 +29,6 @@ class PegSet
   end
 
   def display_current_set
-    put "Your set : #{self}"
+    puts "Your set : #{self}"
   end
 end

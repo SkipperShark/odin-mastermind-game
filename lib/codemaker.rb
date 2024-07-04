@@ -5,7 +5,7 @@ require_relative "peg/code_peg_set"
 class Codemaker
   include Utilities
 
-  attr_reader :is_human
+  attr_reader :is_human, :secret
 
   def initialize(is_human)
     @is_human = is_human
@@ -25,13 +25,11 @@ class Codemaker
     secret.generate
   end
 
-  def show_secret
+  def display_secret
     puts "secret : #{secret}\n\n"
   end
 
   private
-
-  attr_reader :secret
 
   def confirm_secret?
     user_confirmed? "Secret complete, would you like to confirm? (y/n)"

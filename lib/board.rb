@@ -15,8 +15,13 @@ class Board
   end
 
   def show
-    puts "Guesses\t\t\t\t\t\t\tClues"
-    @board_rows.each { |row| display row}
+    puts "Guesses\t\t\t\t\t\tClues"
+    @board_rows.each do |row|
+      row[:guess].display
+      print "\t\t\t\t|\t"
+      row[:clue].display
+      puts ""
+    end
   end
 
   # #todo to be refactored
@@ -32,12 +37,4 @@ class Board
   #   end
   # end
 
-  private
-
-  def display(row)
-    row[:guess].display
-    print "\t\t\t\t|\t"
-    row[:clue].display
-    puts ""
-  end
 end

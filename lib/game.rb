@@ -47,7 +47,7 @@ class Game
     #   end
     if codebreaker.is_human == true
       codemaker.generate_secret
-      codemaker.show_secret
+      codemaker.display_secret
 
       while winner.nil?
         board.show

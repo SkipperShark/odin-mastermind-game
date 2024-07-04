@@ -6,7 +6,7 @@ require_relative "peg/code_peg_set"
 class Codebreaker
   include Utilities
 
-  attr_reader :is_human
+  attr_reader :is_human, :guess
 
   def initialize(is_human)
     @is_human = is_human
