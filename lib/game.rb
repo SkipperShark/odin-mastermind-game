@@ -57,12 +57,9 @@ class Game
         # puts "guess before build: #{codebreaker.guess}"
         codebreaker.build_guess
         # puts "guess after: #{codebreaker.guess}"
-
-
-
         # clue = compute_clue(codebreaker.guess, codemaker.secret)
-        clue = compute_clue(codebreaker.guess, codemaker.secret)
-        puts "clue : #{clue}"
+        clue = Clue.new(codebreaker.guess, codemaker.secret)
+        puts "clue : #{clue.pegs}"
 
 
 
@@ -176,7 +173,4 @@ class Game
   #   secret_pattern.compact!
   #   clue
   # end
-  def compute_clue(guess, secret)
-    Clue.new(guess, secret)
-  end
 end
