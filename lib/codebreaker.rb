@@ -16,8 +16,9 @@ class Codebreaker
   def build_guess
     guess_done = false
     until guess_done
-      @guess.build
-      guess_done = true if confirm_guess?
+      guess.build
+      break if confirm_guess?
+
       reset_guess
     end
   end
@@ -29,6 +30,6 @@ class Codebreaker
   end
 
   def reset_guess
-    @guess.reset
+    guess.reset
   end
 end
