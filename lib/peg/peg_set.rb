@@ -11,7 +11,7 @@ class PegSet
   end
 
   def to_s
-    @pegs.map { |peg| peg.nil? ? "_ " : "#{peg} " }.join
+    @pegs.map { |peg| peg.nil? ? "_ " : "#{peg.color} " }.join
   end
 
   def reset
@@ -20,6 +20,10 @@ class PegSet
 
   def complete?
     @pegs.all? { |code_peg| !code_peg.nil? }
+  end
+
+  def not_complete?
+    !complete?
   end
 
   private
