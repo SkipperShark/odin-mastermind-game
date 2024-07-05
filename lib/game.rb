@@ -6,7 +6,7 @@ require_relative "utilites"
 require_relative "codebreaker"
 require_relative "codemaker"
 require_relative "peg/peg_types/key_peg"
-require_relative "clue"
+require_relative "clue_computer"
 
 # main game engine/driver, contains the turn logic, game end condition logic,
 # and core game logic
@@ -56,13 +56,10 @@ class Game
         puts "turn : #{turn}"
         # puts "guess before build: #{codebreaker.guess}"
         codebreaker.build_guess
+        puts "guess : #{codebreaker.guess}"
         # puts "guess after: #{codebreaker.guess}"
-        # clue = compute_clue(codebreaker.guess, codemaker.secret)
-        clue = Clue.new(codebreaker.guess, codemaker.secret)
-        puts "clue : #{clue.pegs}"
-
-
-
+        clue = compute_clue(codebreaker.guess, codemaker.secret)
+        puts "clue : #{clue}"
 
         # board.add_guess(codebreaker.guess, clue)
         # self.winner = determine_winner clue
@@ -173,4 +170,9 @@ class Game
   #   secret_pattern.compact!
   #   clue
   # end
+
+  def compute_clue(guess, secret)
+    clue_computer = ClueComputer.new(guess, secret)
+    clue_computer.compute
+  end
 end

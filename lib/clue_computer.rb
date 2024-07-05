@@ -1,8 +1,8 @@
 require_relative "peg/key_peg_set"
 
 # Computes clues from a guess and a secret
-class Clue
-  attr_reader :clue
+class ClueComputer
+  attr_reader :clue_pegs
 
   def initialize(guess, secret)
     @guess = guess
@@ -13,15 +13,15 @@ class Clue
     # @clue = KeyPegSet.new.pegs.map do |key_peg|
     #   key_peg.is_matched = false
     # end
-    compute
   end
 
   def compute
-    puts "clue before method : #{clue}"
+    # puts "clue before methdod : #{clue_pegs}"
     determine_full_matches
-    puts "clue after method : #{clue}"
+    # puts "clue after method : #{clue_pegs}"
     guess_pegs.compact!
     secret_pegs.compact!
+    clue_pegs
     # find color and position matches
     # guess_pattern.each.with_index do |guess_code_peg, i|
     #   secret_pattern.each.with_index do |secret_code_peg, y|
@@ -54,12 +54,11 @@ class Clue
 
     # guess_pattern.compact!
     # secret_pattern.compact!
-    clue
   end
 
   private
 
-  attr_accessor :clue_pegs
+  attr_writer :clue_pegs
   attr_reader :guess, :secret, :guess_pegs, :secret_pegs
 
   # def determine_full_matches_v1
@@ -96,8 +95,6 @@ class Clue
 
   # find color and position matches
   def determine_full_matches
-    puts "guess : #{guess}"
-    puts "secret : #{secret}"
     guess_pegs.each_with_index do |guess_peg, index|
       secret_peg = secret_pegs[index]
       next unless guess_peg.color == secret_peg.color
