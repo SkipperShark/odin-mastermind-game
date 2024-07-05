@@ -54,20 +54,23 @@ class Game
       while winner.nil?
         board.show
         puts "turn : #{turn}"
+        # puts "guess before build: #{codebreaker.guess}"
         codebreaker.build_guess
+        # puts "guess after: #{codebreaker.guess}"
 
 
 
         # clue = compute_clue(codebreaker.guess, codemaker.secret)
-        clue = compute_clue
+        clue = compute_clue(codebreaker.guess, codemaker.secret)
+        puts "clue : #{clue}"
 
 
 
 
-        board.add_guess(codebreaker.guess, clue)
-        self.winner = determine_winner clue
-        next_turn
-        codebreaker.reset_guess
+        # board.add_guess(codebreaker.guess, clue)
+        # self.winner = determine_winner clue
+        # next_turn
+        # codebreaker.reset_guess
       end
     end
 
@@ -173,7 +176,7 @@ class Game
   #   secret_pattern.compact!
   #   clue
   # end
-  def compute_clue
+  def compute_clue(guess, secret)
     Clue.new(guess, secret)
   end
 end

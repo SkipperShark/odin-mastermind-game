@@ -4,7 +4,7 @@ class KeyPeg
   POSITION_MATCH_COLOR = "white".freeze
   COLOR_OPTIONS = [FULL_MATCH_COLOR, POSITION_MATCH_COLOR].freeze
 
-  private_class_method :new
+  protected :initialize
   attr_reader :color
 
   def initialize(color)

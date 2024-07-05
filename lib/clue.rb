@@ -3,18 +3,21 @@ require_relative "peg/key_peg_set"
 # Computes clues from a guess and a secret
 class Clue
   def initialize(guess, secret)
-    @guess = guess.dup
-    @secret = secret.dup
-    @clue = KeyPegSet.new.map do |key_peg|
-      key_peg.is_matched = false
-    end
+    @guess = guess
+    @secret = secret
+    @guess_pegs = guess.pegs.dup
+    @secret_pegs = secret.pegs.dup
+    @clue = KeyPegSet.new
+    # @clue = KeyPegSet.new.pegs.map do |key_peg|
+    #   key_peg.is_matched = false
+    # end
     compute
   end
 
   def compute
-    determine_full_matches_v2
-    guess.compact!
-    secret.compact!
+    determine_full_matches
+    guess_pegs.compact!
+    secret_pegs.compact!
     # find color and position matches
     # guess_pattern.each.with_index do |guess_code_peg, i|
     #   secret_pattern.each.with_index do |secret_code_peg, y|
@@ -34,26 +37,26 @@ class Clue
 
     #? use #intersection for position match?
     # find position matches only
-    guess_pattern.each.with_index do |guess_color, i|
-      secret_pattern.each.with_index do |secret_code_peg, y|
-        if guess_color == secret_code_peg
-          clue << KeyPeg.position_match
-          guess_pattern[i] = nil
-          secret_pattern[y] = nil
-          break
-        end
-      end
-    end
+    # guess_pattern.each.with_index do |guess_color, i|
+    #   secret_pattern.each.with_index do |secret_code_peg, y|
+    #     if guess_color == secret_code_peg
+    #       clue << KeyPeg.position_match
+    #       guess_pattern[i] = nil
+    #       secret_pattern[y] = nil
+    #       break
+    #     end
+    #   end
+    # end
 
-    guess_pattern.compact!
-    secret_pattern.compact!
+    # guess_pattern.compact!
+    # secret_pattern.compact!
     clue
   end
 
   private
 
   attr_accessor :clue
-  attr_reader :guess, :secret
+  attr_reader :guess, :secret, :guess_pegs, :secret_pegs
 
   # def determine_full_matches_v1
   #   secret_pattern = secret.each_with_index.map.with do |code_peg, index|
@@ -88,14 +91,16 @@ class Clue
   # end
 
   # find color and position matches
-  def determine_full_matches_v2
-    guess.each_with_index do |guess_peg, index|
-      secret_peg = secret[index]
+  def determine_full_matches
+    puts "guess : #{guess}"
+    puts "secret : #{secret}"
+    guess_pegs.each_with_index do |guess_peg, index|
+      secret_peg = secret_pegs[index]
       next unless guess_peg.color == secret_peg.color
 
       clue.add_full_match
-      guess[index] = nil
-      secret[index] = nil
+      guess_pegs[index] = nil
+      secret_pegs[index] = nil
     end
     # guess_pattern.compact!
     # secret_pattern.compact!
