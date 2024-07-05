@@ -1,4 +1,5 @@
 require_relative "peg_types/key_peg"
+require_relative "peg_set"
 
 # represents a set of key pegs, which represent a clue
 class KeyPegSet < PegSet
