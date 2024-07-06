@@ -16,7 +16,7 @@ class KeyPegSet < PegSet
   end
 
   def all_full_matches?
-    pegs.all? { |key_peg| key_peg.full_match? }
+    pegs.all?(&:full_match?)
   end
 
   private
