@@ -4,7 +4,7 @@ class KeyPeg
   POSITION_MATCH_COLOR = "white".freeze
   COLOR_OPTIONS = [FULL_MATCH_COLOR, POSITION_MATCH_COLOR].freeze
 
-  protected :initialize
+  private_class_method :new
   attr_reader :color
 
   def initialize(color)
@@ -21,6 +21,10 @@ class KeyPeg
 
   def to_s
     color
+  end
+
+  def FULL_MATCH_COLOR # rubocop:disable Naming/MethodName
+    FULL_MATCH_COLOR
   end
 
   def full_match?

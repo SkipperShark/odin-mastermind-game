@@ -67,8 +67,11 @@ class Game
         puts "\n\n--------------- end turn\n\n".colorize(:green)
         board.add_solve_attempt(codebreaker.guess, clue)
         self.winner = determine_winner clue
-        # next_turn
-        # codebreaker.reset_guess
+
+        if winner.nil?
+          next_turn
+          codebreaker.reset_guess
+        end
       end
     end
 
@@ -92,7 +95,6 @@ class Game
 
     board.show
     puts "game ended! Thanks for playing. WINNER : #{winner}".colorize(:green)
-
   end
 
   private
@@ -111,33 +113,51 @@ class Game
     until valid_choice == true
       puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker".colorize(:green)
       input = user_input
-      if input == "y"
-        return true
-      elsif input == "n"
-        return false
-      else
-        puts "I'm not sure what you mean, please try again".colorize(:green)
+      case input
+      when "y" then return true
+      when "n" then return false
+      else puts "I'm not sure what you mean, please try again".colorize(:green)
       end
     end
   end
 
-  def determine_winner (clue)
-    codebreaker_won = clue.count { |code_peg| code_peg.full_match? } >= 4
-    codemaker_won = turn >= 12 &&  !codebreaker_won
-    puts "------------ determine_winner ------------"
-    puts "codebreaker_won : #{codebreaker_won}"
-    puts "codemaker_won : #{codemaker_won}"
+  def determine_winner(clue)
+    codebreaker_won = clue.all_full_matches?
+    codemaker_won = turn >= 12 && !codebreaker_won
+    puts "------------ win condition checking ------------".colorize(:green)
+    puts "codebreaker_won : #{codebreaker_won}".colorize(:green)
+    puts "codemaker_won : #{codemaker_won}".colorize(:green)
     if codebreaker_won == true
       return "codebreaker"
     elsif codemaker_won == true
       return "codemaker"
     end
-    return nil
+
+    nil
   end
 
   def next_turn
     self.turn += 1
   end
+
+  def compute_clue(guess, secret)
+    clue_computer = ClueComputer.new(guess, secret)
+    clue_computer.compute
+  end
+  # def determine_winner (clue)
+  #   codebreaker_won = clue.count { |code_peg| code_peg.full_match? } >= 4
+  #   codemaker_won = turn >= 12 &&  !codebreaker_won
+  #   puts "------------ determine_winner ------------"
+  #   puts "codebreaker_won : #{codebreaker_won}"
+  #   puts "codemaker_won : #{codemaker_won}"
+  #   if codebreaker_won == true
+  #     return "codebreaker"
+  #   elsif codemaker_won == true
+  #     return "codemaker"
+  #   end
+  #   return nil
+  # end
+
 
   # def compute_clue(guess, secret)
   #   secret_pattern = secret.clone.map(&:to_s)
@@ -175,8 +195,4 @@ class Game
   #   clue
   # end
 
-  def compute_clue(guess, secret)
-    clue_computer = ClueComputer.new(guess, secret)
-    clue_computer.compute
-  end
 end
