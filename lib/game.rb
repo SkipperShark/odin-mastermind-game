@@ -1,3 +1,5 @@
+require "colorize"
+
 require_relative "board"
 # require_relative "key_peg"
 # require_relative "code_peg"
@@ -29,7 +31,7 @@ class Game
   end
 
   def play
-    puts "\n\nGame Start!\n\n"
+    puts "\n\nGame Start!\n\n".colorize(:green)
     # puts "secret code : #{@codemaker.show_secret}\n\n"
 
     # if codebreaker.is_human
@@ -53,16 +55,16 @@ class Game
 
       while winner.nil?
         board.show
-        puts "turn : #{turn}"
+        puts "\nturn : #{turn}".colorize(:green)
         # puts "guess before build: #{codebreaker.guess}"
         codebreaker.build_guess
         # puts "guess after: #{codebreaker.guess}"
         clue = compute_clue(codebreaker.guess, codemaker.secret)
-        puts "\n\nend of turn inspections\n"
-        puts "guess : #{codebreaker.guess}"
-        puts "clue : #{clue}"
+        puts "\n\nend of turn inspection\n".colorize(:green)
+        puts "guess : #{codebreaker.guess}".colorize(:green)
+        puts "clue : #{clue}".colorize(:green)
         # puts "clue inspect : #{clue.inspect}"
-        puts "\n\n--------------- end turn\n\n"
+        puts "\n\n--------------- end turn\n\n".colorize(:green)
         board.add_solve_attempt(codebreaker.guess, clue)
         self.winner = determine_winner clue
         # next_turn
@@ -89,7 +91,7 @@ class Game
     # end
 
     board.show
-    puts "game ended! Thanks for playing. WINNER : #{winner}"
+    puts "game ended! Thanks for playing. WINNER : #{winner}".colorize(:green)
 
   end
 
@@ -99,7 +101,7 @@ class Game
   attr_reader :codemaker, :codebreaker
 
   def game_start_message
-    puts "Welcome to mastermind\n\n"
+    puts "Welcome to mastermind\n\n".colorize(:green)
     puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
     print "\n"
   end
@@ -107,14 +109,14 @@ class Game
   def codemaker_human?
     valid_choice = false
     until valid_choice == true
-      puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker"
+      puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker".colorize(:green)
       input = user_input
       if input == "y"
         return true
       elsif input == "n"
         return false
       else
-        puts "I'm not sure what you mean, please try again"
+        puts "I'm not sure what you mean, please try again".colorize(:green)
       end
     end
   end
