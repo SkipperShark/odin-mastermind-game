@@ -1,13 +1,9 @@
 require "colorize"
 
 require_relative "board"
-# require_relative "key_peg"
-# require_relative "code_peg"
-require_relative "solver"
-require_relative "utilites"
+require_relative "guess_computer"
 require_relative "codebreaker"
 require_relative "codemaker"
-require_relative "peg/peg_types/key_peg"
 require_relative "clue_computer"
 
 # main game engine/driver, contains the turn logic, game end condition logic,
@@ -32,23 +28,7 @@ class Game
 
   def play
     puts "\n\nGame Start!\n\n".colorize(:green)
-    # puts "secret code : #{@codemaker.show_secret}\n\n"
 
-    # if codebreaker.is_human
-    #   while winner.nil?
-    #     board.show
-    #     puts "turn : #{turn}"
-    #     codebreaker.build_guess_pattern
-    #     unless codebreaker.user_confirmed?
-    #       codebreaker.reset_guess
-    #       next
-    #     end
-    #     clue = compute_clue(codebreaker.guess, codemaker.secret)
-    #     board.add_guess(codebreaker.guess, clue)
-    #     self.winner = determine_winner clue
-    #     next_turn
-    #     codebreaker.reset_guess
-    #   end
     if codebreaker.is_human == true
       codemaker.generate_secret
       codemaker.display_secret
@@ -60,11 +40,11 @@ class Game
         codebreaker.build_guess
         # puts "guess after: #{codebreaker.guess}"
         clue = compute_clue(codebreaker.guess, codemaker.secret)
-        puts "\n\nend of turn inspection\n".colorize(:green)
-        puts "guess : #{codebreaker.guess}".colorize(:green)
-        puts "clue : #{clue}".colorize(:green)
+        # puts "\n\nend of turn inspection\n".colorize(:green)
+        # puts "guess : #{codebreaker.guess}".colorize(:green)
+        # puts "clue : #{clue}".colorize(:green)
         # puts "clue inspect : #{clue.inspect}"
-        puts "\n\n--------------- end turn\n\n".colorize(:green)
+        # puts "\n\n--------------- end turn\n\n".colorize(:green)
         board.add_solve_attempt(codebreaker.guess, clue)
         self.winner = determine_winner clue
 
@@ -73,9 +53,22 @@ class Game
           codebreaker.reset_guess
         end
       end
-    end
 
-    #todo to be done later as this is more complex
+    elsif codemaker.is_human == true
+      solver = Solver.new
+      clue = []
+      while winner.nil?
+        puts "turn : #{turn}"
+        board.show
+        codebreaker.guess = solver.derive_guess(clue)
+        clue = compute_clue(codebreaker.guess, codemaker.secret)
+        board.add_guess(codebreaker.guess, clue)
+        self.winner = determine_winner clue
+        next_turn
+        codebreaker.reset_guess
+        puts "----\n\n-----"
+      end
+    end
     # elsif codemaker.is_human == true
     # if codemaker.is_human == true
     #   solver = Solver.new
@@ -96,6 +89,46 @@ class Game
     board.show
     puts "game ended! Thanks for playing. WINNER : #{winner}".colorize(:yellow)
   end
+
+  # def play
+  #   puts "\n\nGame Start!\n\n".colorize(:green)
+    # puts "secret code : #{@codemaker.show_secret}\n\n"
+
+    # if codebreaker.is_human
+    #   while winner.nil?
+    #     board.show
+    #     puts "turn : #{turn}"
+    #     codebreaker.build_guess_pattern
+    #     unless codebreaker.user_confirmed?
+    #       codebreaker.reset_guess
+    #       next
+    #     end
+    #     clue = compute_clue(codebreaker.guess, codemaker.secret)
+    #     board.add_guess(codebreaker.guess, clue)
+    #     self.winner = determine_winner clue
+    #     next_turn
+    #     codebreaker.reset_guess
+    #   end
+    # elsif codemaker.is_human == true
+    # if codemaker.is_human == true
+    #   solver = Solver.new
+    #   clue = []
+    #   while winner.nil?
+    #     puts "turn : #{turn}"
+    #     board.show
+    #     codebreaker.guess = solver.derive_guess(clue)
+    #     clue = compute_clue(codebreaker.guess, codemaker.secret)
+    #     board.add_guess(codebreaker.guess, clue)
+    #     self.winner = determine_winner clue
+    #     next_turn
+    #     codebreaker.reset_guess
+    #     puts "----\n\n-----"
+    #   end
+    # end
+
+  #   board.show
+  #   puts "game ended! Thanks for playing. WINNER : #{winner}".colorize(:yellow)
+  # end
 
   private
 
@@ -156,43 +189,6 @@ class Game
   #     return "codemaker"
   #   end
   #   return nil
-  # end
-
-
-  # def compute_clue(guess, secret)
-  #   secret_pattern = secret.clone.map(&:to_s)
-  #   guess_pattern = guess.clone.map(&:to_s)
-  #   clue = []
-
-  #   # find color and position matches
-  #   guess_pattern.each.with_index do |guess_color, i|
-  #     secret_pattern.each.with_index do |secret_color, y|
-  #       if (guess_color == secret_color) && (i == y)
-  #         clue << KeyPeg.full_match
-  #         guess_pattern[i] = nil
-  #         secret_pattern[y] = nil
-  #         break
-  #       end
-  #     end
-  #   end
-  #   guess_pattern.compact!
-  #   secret_pattern.compact!
-
-  #   # find position matches only
-  #   guess_pattern.each.with_index do |guess_color, i|
-  #     secret_pattern.each.with_index do |secret_color, y|
-  #       if guess_color == secret_color
-  #         clue << KeyPeg.position_match
-  #         guess_pattern[i] = nil
-  #         secret_pattern[y] = nil
-  #         break
-  #       end
-  #     end
-  #   end
-
-  #   guess_pattern.compact!
-  #   secret_pattern.compact!
-  #   clue
   # end
 
 end
