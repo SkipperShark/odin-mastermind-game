@@ -94,7 +94,7 @@ class Game
     # end
 
     board.show
-    puts "game ended! Thanks for playing. WINNER : #{winner}".colorize(:green)
+    puts "game ended! Thanks for playing. WINNER : #{winner}".colorize(:yellow)
   end
 
   private
