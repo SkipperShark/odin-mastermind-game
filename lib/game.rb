@@ -56,14 +56,15 @@ class Game
         puts "turn : #{turn}"
         # puts "guess before build: #{codebreaker.guess}"
         codebreaker.build_guess
-        puts "guess : #{codebreaker.guess}"
         # puts "guess after: #{codebreaker.guess}"
         clue = compute_clue(codebreaker.guess, codemaker.secret)
+        puts "\n\nend of turn inspections\n"
+        puts "guess : #{codebreaker.guess}"
         puts "clue : #{clue}"
-        puts "clue inspect : #{clue.inspect}"
-        puts "\n\n----- end turn -----\n\n"
-        # board.add_guess(codebreaker.guess, clue)
-        # self.winner = determine_winner clue
+        # puts "clue inspect : #{clue.inspect}"
+        puts "\n\n--------------- end turn\n\n"
+        board.add_solve_attempt(codebreaker.guess, clue)
+        self.winner = determine_winner clue
         # next_turn
         # codebreaker.reset_guess
       end

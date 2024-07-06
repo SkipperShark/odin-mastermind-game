@@ -15,10 +15,10 @@ class Board
   end
 
   def show
-    puts "Guesses\t\t\t\t\t\tClues"
+    puts "Guesses\t\t\t\t\t\t\tClues"
     @board_rows.each do |row|
       row[:guess].display
-      print "\t\t\t\t|\t"
+      print "\t\t\t\t|\t\t"
       row[:clue].display
       puts ""
     end
@@ -32,7 +32,6 @@ class Board
 
     board_rows[row_index][:guess] = guess.dup
     board_rows[row_index][:clue] = clue.dup
-    end
   end
   # def add_guess(guess_pattern, clue_pattern)
   #   # puts "guess_pattern : #{guess_pattern}"
@@ -45,5 +44,4 @@ class Board
   #     self.board[:decode_rows][row_index][:key_pegs][i] = clue_pattern[i]
   #   end
   # end
-
 end
