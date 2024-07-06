@@ -23,13 +23,14 @@ class Codebreaker
     end
   end
 
+  def reset_guess
+    guess.reset
+  end
+
   private
 
   def confirm_guess?
     user_confirmed? "Guess complete, would you like to confirm? (y/n)"
   end
 
-  def reset_guess
-    guess.reset
-  end
 end
