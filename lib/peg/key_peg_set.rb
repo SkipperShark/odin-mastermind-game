@@ -15,6 +15,10 @@ class KeyPegSet < PegSet
     add_to_set(KeyPeg.full_match)
   end
 
+  def all_full_matches?
+    pegs.all? { |key_peg| key_peg.full_match? }
+  end
+
   private
 
   def add_to_set(color)
