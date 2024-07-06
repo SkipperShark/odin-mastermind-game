@@ -3,7 +3,7 @@ require_relative "peg/key_peg_set"
 
 # represents the mastermind board, which includes guess rows and clue rows
 class Board
-  attr_accessor :board
+  attr_accessor :board_rows
 
   def initialize
     @board_rows = Array.new(12) do
@@ -24,7 +24,16 @@ class Board
     end
   end
 
-  # #todo to be refactored
+  def add_solve_attempt(guess, clue)
+    # puts "guess_pattern : #{guess_pattern}"
+    row_index = board_rows.rindex { |row| row[:guess].not_complete? }
+    # puts "row_index : #{row_index}}"
+    return if row_index.nil?
+
+    board_rows[row_index][:guess] = guess.dup
+    board_rows[row_index][:clue] = clue.dup
+    end
+  end
   # def add_guess(guess_pattern, clue_pattern)
   #   # puts "guess_pattern : #{guess_pattern}"
   #   row_index = self.board[:decode_rows].rindex { |row| row[:code_pegs].all?("") }

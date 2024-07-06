@@ -60,7 +60,8 @@ class Game
         # puts "guess after: #{codebreaker.guess}"
         clue = compute_clue(codebreaker.guess, codemaker.secret)
         puts "clue : #{clue}"
-
+        puts "clue inspect : #{clue.inspect}"
+        puts "\n\n----- end turn -----\n\n"
         # board.add_guess(codebreaker.guess, clue)
         # self.winner = determine_winner clue
         # next_turn
