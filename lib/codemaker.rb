@@ -16,7 +16,8 @@ class Codemaker
     secret_done = false
     until secret_done
       secret.build
-      secret_done = true if confirm_secret?
+      break if confirm_secret?
+
       reset_secret
     end
   end
