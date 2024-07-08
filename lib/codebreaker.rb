@@ -1,5 +1,7 @@
 # require_relative "guess"
 require_relative "peg/code_peg_set"
+require_relative "guess_computer"
+require_relative "peg/peg_types/code_peg"
 
 # Represents a player that is a codebreaker, contains logic and methods that
 # describe what the codebreaker can do, such as building the guess pattern
@@ -21,6 +23,11 @@ class Codebreaker
 
       reset_guess
     end
+  end
+
+  def generate_guess(clue)
+    guess_computer = GuessComputer.new
+    self.guess = guess_computer.compute_donald_knuth
   end
 
   def reset_guess

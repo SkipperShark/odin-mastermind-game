@@ -18,12 +18,14 @@ class Game
     game_start_message
 
     codemaker_is_human = codemaker_human?
-    codebreaker_is_human = !codebreaker_is_human
+    codebreaker_is_human = !codemaker_is_human
 
     # @codemaker = Player.codemaker(codemaker_is_human)
     # @codebreaker = Player.codebreaker(codebreaker_is_human)
     @codemaker = Codemaker.new(codemaker_is_human)
     @codebreaker = Codebreaker.new(codebreaker_is_human)
+    puts "codemaker_is_human : #{codemaker_is_human}".colorize(:blue)
+    puts "codebreaker_is_human : #{codebreaker_is_human}".colorize(:blue)
   end
 
   def play
@@ -55,14 +57,15 @@ class Game
       end
 
     elsif codemaker.is_human == true
-      solver = Solver.new
-      clue = []
+      # guess_computer.compute_donald_knuth
       while winner.nil?
         puts "turn : #{turn}"
         board.show
-        codebreaker.guess = solver.derive_guess(clue)
+
+        codebreaker.generate_guess
+
         clue = compute_clue(codebreaker.guess, codemaker.secret)
-        board.add_guess(codebreaker.guess, clue)
+        board.add_solve_attempt(codebreaker.guess, clue)
         self.winner = determine_winner clue
         next_turn
         codebreaker.reset_guess
