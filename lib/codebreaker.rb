@@ -27,7 +27,7 @@ class Codebreaker
 
   def generate_guess(clue=nil)
     guess_computer = GuessComputer.new
-    self.guess = guess_computer.compute_donald_knuth
+    self.guess = guess_computer.compute_donald_knuth(clue)
   end
 
   def reset_guess
