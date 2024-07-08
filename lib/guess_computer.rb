@@ -6,8 +6,8 @@ require_relative "peg/peg_types/code_peg"
 class GuessComputer
   attr_accessor :clue, :guess, :guess_color_index, :solution
 
-  def initialize(color_options)
-    @code_color_options = color_options
+  def initialize
+    @code_color_options = CodePeg.color_options
     # @guess = []
     # @guess_color_index = 0
     # @solution = []
