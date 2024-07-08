@@ -1,3 +1,4 @@
+require "colorize"
 require_relative "peg_types/code_peg"
 require_relative "peg_set"
 
@@ -16,9 +17,9 @@ class CodePegSet < PegSet
   end
 
   def build
-    puts "Input color for your first code peg. Enter 'r' to start again"
+    puts "Input color for your first code peg. Enter 'r' to start again".colorize(:green)
     prompt_code_peg_choice until complete?
-    puts "final : #{self}"
+    puts "final : #{self}".colorize(:green)
   end
 
   def generate_random
@@ -44,7 +45,7 @@ class CodePegSet < PegSet
     elsif CodePeg.valid_color? input
       add_to_set input
     else
-      puts "That is not a valid color! Please try again"
+      puts "That is not a valid color! Please try again".colorize(:red)
     end
   end
 end

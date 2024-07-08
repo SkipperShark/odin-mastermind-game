@@ -1,3 +1,4 @@
+require "colorize"
 require_relative "../utilites"
 
 # represents a set of pegs, which may either be code pegs or key pegs
@@ -33,6 +34,6 @@ class PegSet
   end
 
   def display_current_set
-    puts "Your set : #{self}"
+    puts "Your set : #{self}".colorize(:green)
   end
 end
