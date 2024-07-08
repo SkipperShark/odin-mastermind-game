@@ -23,7 +23,7 @@ class GuessComputer
         color_option_code: index + 1
       }
     end
-    pp code_color_options
+    # pp code_color_options
     puts "\n\n--------------------\n\n"
 
     # possible_guesses = code_color_options.repeated_permutation(4).to_a
