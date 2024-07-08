@@ -26,10 +26,6 @@ class GuessComputer
     # pp code_color_options
     puts "\n\n--------------------\n\n"
 
-    # possible_guesses = code_color_options.repeated_permutation(4).to_a
-    # possible_guesses.each_with_index do |guess, index|
-    #   pp "index : #{index}, guess : #{guess}"
-    # end
     raw = code_color_options.repeated_permutation(4).to_a
 
     # pp raw
@@ -41,12 +37,10 @@ class GuessComputer
         code_pegs: guess.map { |code_peg| code_peg[:color_option] }
       }
     end
-    # possible_guesses.each_with_index do |guess, index|
-    #   pp "guess no : #{index}, guess : #{guess.map { |ele| ele[:color_option] }}, guess code : #{guess.map { |ele| ele[:index] } }"
+
+    # possible_guesses.each do |guess|
+    #   pp "guess index : #{guess[:index]}, guess : #{guess[:code_pegs]}, guess id : #{guess[:id]}"
     # end
-    possible_guesses.each do |guess|
-      pp "guess index : #{guess[:index]}, guess : #{guess[:code_pegs]}, guess id : #{guess[:id]}"
-    end
 
     guess_colors = []
     guess_colors = possible_guesses.select { |guess| guess[:id] == "1122" }.first[:code_pegs] if clue.nil?
