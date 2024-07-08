@@ -22,7 +22,7 @@ class Codemaker
   end
 
   def generate_secret
-    secret.generate
+    secret.generate_random
   end
 
   def display_secret

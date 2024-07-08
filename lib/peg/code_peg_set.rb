@@ -9,8 +9,10 @@ class CodePegSet < PegSet
     super
   end
 
-  def from_colors(colors)
-    colors.each { |color| add_to_set(color) }
+  def self.from_colors(colors)
+    code_peg_set = new
+    colors.each { |color| code_peg_set.add_to_set(color) }
+    code_peg_set
   end
 
   def build
@@ -25,13 +27,13 @@ class CodePegSet < PegSet
     end
   end
 
-  private
-
   def add_to_set(color)
     return if complete?
 
     pegs[pegs.index nil] = CodePeg.new(color)
   end
+
+  private
 
   def prompt_code_peg_choice
     display_current_set

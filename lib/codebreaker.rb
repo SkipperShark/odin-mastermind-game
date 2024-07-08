@@ -25,7 +25,7 @@ class Codebreaker
     end
   end
 
-  def generate_guess(clue)
+  def generate_guess(clue=nil)
     guess_computer = GuessComputer.new
     self.guess = guess_computer.compute_donald_knuth
   end
@@ -36,8 +36,9 @@ class Codebreaker
 
   private
 
+  attr_writer :guess
+
   def confirm_guess?
     user_confirmed? "Guess complete, would you like to confirm? (y/n)"
   end
-
 end

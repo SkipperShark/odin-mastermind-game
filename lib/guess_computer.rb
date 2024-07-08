@@ -1,4 +1,6 @@
+require "colorize"
 require_relative "peg/peg_types/code_peg"
+require_relative "peg/code_peg_set"
 
 # represents an algorithm that, based on clues given by the game engine,
 # constructs guesses to try to win the game. used when the codebreaker is
@@ -46,13 +48,13 @@ class GuessComputer
       pp "guess index : #{guess[:index]}, guess : #{guess[:code_pegs]}, guess id : #{guess[:id]}"
     end
 
-    if clue.nil?
-      ans = possible_guesses.select { |guess| guess[:id] == "1122" }.first
-    else
-      ans = []
-    end
-    puts "ans : #{ans}"
-    return ans
+    guess_colors = []
+    guess_colors = possible_guesses.select { |guess| guess[:id] == "1122" }.first[:code_pegs] if clue.nil?
+
+    guess = CodePegSet.from_colors(guess_colors)
+    # puts "guess : #{guess}"
+    puts "guess inspect : #{guess.inspect}".colorize(:blue)
+    guess
     # if clue.nil?
 
     # end
