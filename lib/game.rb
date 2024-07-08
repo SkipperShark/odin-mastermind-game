@@ -91,8 +91,11 @@ class Game
     #   end
     # end
 
+    puts "game ended!".colorize(:green)
+    puts "WINNER : #{winner}".colorize(:green)
+    puts "Thanks for playing! Goodbye!".colorize(:green)
+    puts "Board end game state\n".colorize(:green)
     board.show
-    puts "game ended! Thanks for playing. WINNER : #{winner}".colorize(:yellow)
   end
 
   # def play
@@ -149,12 +152,12 @@ class Game
   def codemaker_human?
     valid_choice = false
     until valid_choice == true
-      puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker".colorize(:green)
+      puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker".colorize(:yellow)
       input = user_input
       case input
       when "y" then return true
       when "n" then return false
-      else puts "I'm not sure what you mean, please try again".colorize(:green)
+      else puts "I'm not sure what you mean, please try again".colorize(:!)
       end
     end
   end

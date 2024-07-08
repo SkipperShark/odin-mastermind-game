@@ -1,3 +1,4 @@
+require "colorize"
 require_relative "peg/code_peg_set"
 
 # Represents a player that is the codemaker, contains logic and methods that
@@ -33,7 +34,7 @@ class Codemaker
   private
 
   def confirm_secret?
-    user_confirmed? "Secret complete, would you like to confirm? (y/n)"
+    user_confirmed? "Secret complete, would you like to confirm? (y/n)".colorize(:yellow)
   end
 
   def reset_secret

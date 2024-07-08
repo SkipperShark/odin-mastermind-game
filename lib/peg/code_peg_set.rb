@@ -17,7 +17,7 @@ class CodePegSet < PegSet
   end
 
   def build
-    puts "Input color for your first code peg. Enter 'r' to start again".colorize(:green)
+    puts "Input color for your first code peg. Enter 'r' to start again".colorize(:yellow)
     prompt_code_peg_choice until complete?
     puts "final : #{self}".colorize(:green)
   end
