@@ -9,19 +9,29 @@ class CodePegSet < PegSet
     super
   end
 
+  def from_colors(colors)
+    colors.each { |color| add_to_set(color) }
+  end
+
   def build
     puts "Input color for your first code peg. Enter 'r' to start again"
     prompt_code_peg_choice until complete?
     puts "final : #{self}"
   end
 
-  def generate
+  def generate_random
     pegs.each do
       add_to_set(CodePeg.random_color)
     end
   end
 
   private
+
+  def add_to_set(color)
+    return if complete?
+
+    pegs[pegs.index nil] = CodePeg.new(color)
+  end
 
   def prompt_code_peg_choice
     display_current_set
@@ -34,11 +44,5 @@ class CodePegSet < PegSet
     else
       puts "That is not a valid color! Please try again"
     end
-  end
-
-  def add_to_set(color)
-    return if complete?
-
-    pegs[pegs.index nil] = CodePeg.new(color)
   end
 end
