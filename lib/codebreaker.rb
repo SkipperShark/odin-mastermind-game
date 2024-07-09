@@ -13,6 +13,9 @@ class Codebreaker
   def initialize(is_human)
     @is_human = is_human
     @guess = CodePegSet.new
+    return if is_human
+
+    @guess_computer = GuessComputer.new
   end
 
   def build_guess
@@ -25,8 +28,7 @@ class Codebreaker
     end
   end
 
-  def generate_guess(clue=nil)
-    guess_computer = GuessComputer.new
+  def generate_guess(clue = nil)
     self.guess = guess_computer.compute_donald_knuth(clue)
   end
 
@@ -36,6 +38,7 @@ class Codebreaker
 
   private
 
+  attr_reader :guess_computer
   attr_writer :guess
 
   def confirm_guess?
