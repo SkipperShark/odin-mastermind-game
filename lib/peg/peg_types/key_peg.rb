@@ -23,10 +23,6 @@ class KeyPeg
     color
   end
 
-  def FULL_MATCH_COLOR # rubocop:disable Naming/MethodName
-    FULL_MATCH_COLOR
-  end
-
   def full_match?
     color == FULL_MATCH_COLOR
   end
