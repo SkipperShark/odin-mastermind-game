@@ -28,8 +28,12 @@ class Codebreaker
     end
   end
 
-  def generate_guess(clue = nil)
-    self.guess = guess_computer.compute_donald_knuth(clue)
+  def generate_guess
+    self.guess = guess_computer.compute_donald_knuth
+  end
+
+  def feed_clue_to_computer(clue)
+    guess_computer.calc_response(clue)
   end
 
   def reset_guess

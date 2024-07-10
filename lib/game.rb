@@ -59,6 +59,7 @@ class Game
     elsif codemaker.is_human == true
       codemaker.build_secret
       # guess_computer.compute_donald_knuth
+      clue = nil
       while winner.nil?
         puts "turn : #{turn}"
         board.show
@@ -66,6 +67,8 @@ class Game
         codebreaker.generate_guess
 
         clue = compute_clue(codebreaker.guess, codemaker.secret)
+
+        codebreaker.feed_clue_to_computer clue
 
         board.add_solve_attempt(codebreaker.guess, clue)
         self.winner = determine_winner clue
@@ -198,5 +201,4 @@ class Game
   #   end
   #   return nil
   # end
-
 end
