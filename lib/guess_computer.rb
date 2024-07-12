@@ -14,36 +14,52 @@ class GuessComputer
     @guess_history = []
 
     show_guess_options
-    pp @guess_history
+    show_guess_history
   end
 
   def compute_donald_knuth
     first_turn = guess_history.empty?
     if first_turn
       self.current_option = guess_options.select { |option| option[:id] == "1122" }.first
-      guess = construct_guess
-      puts "guess : #{guess}".colorize(:blue)
-      return guess
+    else
+      self.current_option = guess_options.first
     end
-    nil
+      
+    guess = construct_guess
+    puts "guess : #{guess}".colorize(:blue)
+    guess
   end
 
   def calc_response(clue)
+    guess_colors = current_option[:colors].uniq
     num_position_matches = clue.pegs.count { |key_peg| key_peg&.position_match? }
     num_full_matches = clue.pegs.count { |key_peg| key_peg&.full_match? }
-    puts "num_full_matches : #{num_full_matches}, num_partial_matches : #{num_position_matches}"
+    num_matches = num_full_matches + num_position_matches
+    no_matches = num_matches <= 0
+    match_present = num_matches.positive? && num_matches < 4
+    game_ended = num_full_matches == 4
 
-    # if guess didnt get any matches, remove guess colors from possible options
-    if num_full_matches + num_full_matches <= 0
-      guess_colors = current_option[:colors].uniq
+    puts "num_full_matches : #{num_full_matches}, num_partial_matches : #{num_position_matches}"
+    # no need to calc response when codebreaker wins
+    return if game_ended
+
+    # if attempt didnt get any matches, remove guess colors from possible options
+    if no_matches
       self.guess_options = guess_options.filter do |option|
         !guess_colors.intersect?(option[:colors])
       end
+
+    # if guess had any response, remove options which dont have guess colors
+    elsif match_present
+      self.guess_options = guess_options.filter do |option|
+        guess_colors.intersect?(option[:colors])
+      end
     end
+
     add_to_guess_history
     show_guess_options
     puts "End of turn. Guess history:".colorize(:cyan)
-    pp @guess_history
+    show_guess_history
   end
 
   private
@@ -58,13 +74,20 @@ class GuessComputer
   def add_to_guess_history
     guess_history << {
       colors: current_option[:colors],
-      score: guess_options.size
+      score: guess_options.size,
+      options: guess_options
     }
   end
 
   def show_guess_options
     guess_options.each do |guess|
       pp "index: #{guess[:index]}, colors: #{guess[:colors]}, id: #{guess[:id]}"
+    end
+  end
+
+  def show_guess_history
+    guess_history.each do |guess|
+      pp "colors: #{guess[:colors]}, score: #{guess[:score]}"
     end
   end
 
