@@ -10,91 +10,128 @@ class GuessComputer
   def initialize
     @code_color_options = CodePeg.color_options
     @guess_options = compute_guess_options
+    @guess_options_static = @guess_options.dup
 
     @current_option = nil
     @guess_history = []
+
+    @color_counter = 1
+    @solution = []
 
     # show_guess_options
     show_guess_history
   end
 
-  def get_secret(secret)
-    @secret = secret
-  end
-
-  def compute_donald_knuth
+  def compute_user88
     first_turn = guess_history.empty?
     if first_turn
-      self.current_option = guess_options.select { |option| option[:id] == "1122" }.first
+      self.current_option = guess_options.select { |option| option[:id] == "1111" }.first
     else
       self.current_option = guess_options.first
     end
-      
+
     guess = construct_guess(current_option[:colors])
     puts "guess : #{guess}".colorize(:blue)
     guess
   end
-  
-  def calc_response(clue)
-    puts "calc response"
-    puts "current_option : #{current_option}".colorize(:blue)
-    puts "clue : #{clue}".colorize(:blue)
+
+  def calc_response_user88(clue)
+    guess_colors = current_option[:colors].uniq
     num_position_matches = clue.pegs.count { |key_peg| key_peg&.position_match? }
     num_full_matches = clue.pegs.count { |key_peg| key_peg&.full_match? }
-    puts "guess options length : #{guess_options.length}"
+    num_matches = num_full_matches + num_position_matches
 
-    # eliminate inconsistent codes
-    guess_options.dup.each_with_index do |option, index|
-      # puts "#{option}"
-      simulated_guess = construct_guess(option[:colors])
-      simulated_secret = construct_guess(current_option[:colors])
-      clue_computer = ClueComputer.new(simulated_guess, simulated_secret)
-      simulated_clue = clue_computer.compute
-      s_num_position_matches = simulated_clue.pegs.count { |key_peg| key_peg&.position_match? }
-      s_num_full_matches = simulated_clue.pegs.count { |key_peg| key_peg&.full_match? }
-      if option[:id] == "1122" || option[:index] == 7
-        puts "num_position_matches: #{num_position_matches}"
-        puts "num_full_matches: #{num_full_matches}"
-        puts "s_num_position_matches: #{s_num_position_matches}"
-        puts "s_num_full_matches: #{s_num_full_matches}"
-        puts "simulated_guess: #{simulated_guess}"
-        puts "simulated_secret: #{simulated_secret}"
-        puts "simulated_clue: #{simulated_clue}"
-      end
-      if num_position_matches != s_num_position_matches || num_full_matches != s_num_full_matches
-        guess_options.delete_at(index)
-      end
+    no_matches = num_matches <= 0
+    # match_present = num_matches.positive? && num_matches < 4
+    game_ended = num_full_matches == 4
+
+    puts "num_full_matches : #{num_full_matches}, num_partial_matches : #{num_position_matches}"
+    # no need to calc response when codebreaker wins
+    return if game_ended
+
+    if no_matches
+      color_counter += 1
+      return
     end
 
-    add_to_guess_history
-    show_guess_options
-    puts "End of turn. Guess history:".colorize(:cyan)
-    show_guess_history
+    num_full_matches.times do
+      solution << color_counter
+    end
+
+    color_counter += 1
+
+
+
+
+
+    # if guess had any response, remove options which dont have guess colors
   end
-  # def calc_response(clue)
-  #   guess_colors = current_option[:colors].uniq
+  # def compute_donald_knuth
+  #   first_turn = guess_history.empty?
+  #   if first_turn
+  #     self.current_option = guess_options.select { |option| option[:id] == "1122" }.first
+  #   else
+  #     options = minimax(construct_guess(current_option[:colors]))
+  #     puts options
+  #     self.current_option = guess_options.first
+  #   end
+
+  #   guess = construct_guess(current_option[:colors])
+  #   puts "guess : #{guess}".colorize(:blue)
+  #   guess
+  # end
+
+  # def calc_response_donald_knuth(clue)
+  #   puts "calc response"
+  #   puts "current_option : #{current_option}".colorize(:blue)
+  #   puts "clue : #{clue}".colorize(:blue)
   #   num_position_matches = clue.pegs.count { |key_peg| key_peg&.position_match? }
   #   num_full_matches = clue.pegs.count { |key_peg| key_peg&.full_match? }
-  #   num_matches = num_full_matches + num_position_matches
-  #   no_matches = num_matches <= 0
-  #   match_present = num_matches.positive? && num_matches < 4
-  #   game_ended = num_full_matches == 4
+  #   puts "guess options length : #{guess_options.length}"
 
-  #   puts "num_full_matches : #{num_full_matches}, num_partial_matches : #{num_position_matches}"
-  #   # no need to calc response when codebreaker wins
-  #   return if game_ended
+  #   # eliminate inconsistent codes
+  #   guess_options.dup.each_with_index do |option, index|
+  #     # puts "#{option}"
+  #     sim_secret = construct_guess(option[:colors])
+  #     sim_guess = construct_guess(current_option[:colors])
+  #     clue_computer = ClueComputer.new(sim_guess, sim_secret)
+  #     sim_clue = clue_computer.compute
+  #     s_num_pos_matches = sim_clue.pegs.count { |peg| peg&.position_match? }
+  #     s_num_full_matches = sim_clue.pegs.count { |peg| peg&.full_match? }
 
-  #   # if attempt didnt get any matches, remove guess colors from possible options
-  #   if no_matches
-  #     self.guess_options = guess_options.filter do |option|
-  #       !guess_colors.intersect?(option[:colors])
-  #     end
+  #     delete_guess =  num_position_matches != s_num_pos_matches ||
+  #                     num_full_matches != s_num_full_matches
 
-  #   # if guess had any response, remove options which dont have guess colors
-  #   elsif match_present
-  #     self.guess_options = guess_options.filter do |option|
-  #       guess_colors.intersect?(option[:colors])
-  #     end
+  #     guess_options.delete_at(index) if delete_guess
+  #   end
+
+  #   add_to_guess_history
+  #   show_guess_options
+  #   puts "End of turn. Guess history:".colorize(:cyan)
+  #   show_guess_history
+  # end
+  # def calc_response(clue)
+  #   puts "calc response"
+  #   puts "current_option : #{current_option}".colorize(:blue)
+  #   puts "clue : #{clue}".colorize(:blue)
+  #   num_position_matches = clue.pegs.count { |key_peg| key_peg&.position_match? }
+  #   num_full_matches = clue.pegs.count { |key_peg| key_peg&.full_match? }
+  #   puts "guess options length : #{guess_options.length}"
+
+  #   # eliminate inconsistent codes
+  #   guess_options.dup.each_with_index do |option, index|
+  #     # puts "#{option}"
+  #     sim_guess = construct_guess(option[:colors])
+  #     sim_secret = construct_guess(current_option[:colors])
+  #     clue_computer = ClueComputer.new(sim_guess, sim_secret)
+  #     sim_clue = clue_computer.compute
+  #     s_num_pos_matches = sim_clue.pegs.count { |peg| peg&.position_match? }
+  #     s_num_full_matches = sim_clue.pegs.count { |peg| peg&.full_match? }
+
+  #     delete_guess =  num_position_matches != s_num_pos_matches ||
+  #                     num_full_matches != s_num_full_matches
+
+  #     guess_options.delete_at(index) if delete_guess
   #   end
 
   #   add_to_guess_history
@@ -103,10 +140,37 @@ class GuessComputer
   #   show_guess_history
   # end
 
+
   private
 
-  attr_accessor :guess_options, :current_option, :guess_history
+  attr_accessor :guess_options, :current_option, :guess_history,
+                :guess_options_static, :color_counter
   attr_reader :code_color_options, :secret
+
+  def minimax(sim_secret)
+    guess_option_scores = []
+    guess_options_static.each do |option|
+      score = 0
+      guess_options_static.each do |option|
+        sim_guess = construct_guess(option[:colors])
+        clue_computer = ClueComputer.new(sim_guess, sim_secret)
+        sim_clue = clue_computer.compute
+        s_num_pos_matches = sim_clue.pegs.count { |peg| peg&.position_match? }
+        s_num_full_matches = sim_clue.pegs.count { |peg| peg&.full_match? }
+
+        delete_guess =  num_position_matches != s_num_pos_matches ||
+                        num_full_matches != s_num_full_matches
+
+        score += 1 if delete_guess
+      end
+      guess_option_scores << {
+        score:,
+        colors: option[:colors],
+        id:
+      }
+    end
+    guess_option_scores
+  end
 
   def construct_guess(colors)
     CodePegSet.from_colors(colors)
