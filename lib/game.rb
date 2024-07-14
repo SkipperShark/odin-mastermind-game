@@ -22,6 +22,7 @@ class Game
 
     # @codemaker = Player.codemaker(codemaker_is_human)
     # @codebreaker = Player.codebreaker(codebreaker_is_human)
+    
     @codemaker = Codemaker.new(codemaker_is_human)
     @codebreaker = Codebreaker.new(codebreaker_is_human)
     puts "codemaker_is_human : #{codemaker_is_human}".colorize(:blue)
@@ -59,7 +60,6 @@ class Game
     elsif codemaker.is_human == true
       codemaker.build_secret
       # guess_computer.compute_donald_knuth
-      clue = nil
       while winner.nil?
         puts "turn : #{turn}"
         board.show

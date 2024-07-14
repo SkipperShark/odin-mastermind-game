@@ -1,6 +1,7 @@
 require "colorize"
 require_relative "peg/peg_types/code_peg"
 require_relative "peg/code_peg_set"
+require_relative "clue_computer"
 
 # represents an algorithm that, based on clues given by the game engine,
 # constructs guesses to try to win the game. used when the codebreaker is
@@ -13,8 +14,12 @@ class GuessComputer
     @current_option = nil
     @guess_history = []
 
-    show_guess_options
+    # show_guess_options
     show_guess_history
+  end
+
+  def get_secret(secret)
+    @secret = secret
   end
 
   def compute_donald_knuth
@@ -25,34 +30,39 @@ class GuessComputer
       self.current_option = guess_options.first
     end
       
-    guess = construct_guess
+    guess = construct_guess(current_option[:colors])
     puts "guess : #{guess}".colorize(:blue)
     guess
   end
-
+  
   def calc_response(clue)
-    guess_colors = current_option[:colors].uniq
+    puts "calc response"
+    puts "current_option : #{current_option}".colorize(:blue)
+    puts "clue : #{clue}".colorize(:blue)
     num_position_matches = clue.pegs.count { |key_peg| key_peg&.position_match? }
     num_full_matches = clue.pegs.count { |key_peg| key_peg&.full_match? }
-    num_matches = num_full_matches + num_position_matches
-    no_matches = num_matches <= 0
-    match_present = num_matches.positive? && num_matches < 4
-    game_ended = num_full_matches == 4
+    puts "guess options length : #{guess_options.length}"
 
-    puts "num_full_matches : #{num_full_matches}, num_partial_matches : #{num_position_matches}"
-    # no need to calc response when codebreaker wins
-    return if game_ended
-
-    # if attempt didnt get any matches, remove guess colors from possible options
-    if no_matches
-      self.guess_options = guess_options.filter do |option|
-        !guess_colors.intersect?(option[:colors])
+    # eliminate inconsistent codes
+    guess_options.dup.each_with_index do |option, index|
+      # puts "#{option}"
+      simulated_guess = construct_guess(option[:colors])
+      simulated_secret = construct_guess(current_option[:colors])
+      clue_computer = ClueComputer.new(simulated_guess, simulated_secret)
+      simulated_clue = clue_computer.compute
+      s_num_position_matches = simulated_clue.pegs.count { |key_peg| key_peg&.position_match? }
+      s_num_full_matches = simulated_clue.pegs.count { |key_peg| key_peg&.full_match? }
+      if option[:id] == "1122" || option[:index] == 7
+        puts "num_position_matches: #{num_position_matches}"
+        puts "num_full_matches: #{num_full_matches}"
+        puts "s_num_position_matches: #{s_num_position_matches}"
+        puts "s_num_full_matches: #{s_num_full_matches}"
+        puts "simulated_guess: #{simulated_guess}"
+        puts "simulated_secret: #{simulated_secret}"
+        puts "simulated_clue: #{simulated_clue}"
       end
-
-    # if guess had any response, remove options which dont have guess colors
-    elsif match_present
-      self.guess_options = guess_options.filter do |option|
-        guess_colors.intersect?(option[:colors])
+      if num_position_matches != s_num_position_matches || num_full_matches != s_num_full_matches
+        guess_options.delete_at(index)
       end
     end
 
@@ -61,14 +71,45 @@ class GuessComputer
     puts "End of turn. Guess history:".colorize(:cyan)
     show_guess_history
   end
+  # def calc_response(clue)
+  #   guess_colors = current_option[:colors].uniq
+  #   num_position_matches = clue.pegs.count { |key_peg| key_peg&.position_match? }
+  #   num_full_matches = clue.pegs.count { |key_peg| key_peg&.full_match? }
+  #   num_matches = num_full_matches + num_position_matches
+  #   no_matches = num_matches <= 0
+  #   match_present = num_matches.positive? && num_matches < 4
+  #   game_ended = num_full_matches == 4
+
+  #   puts "num_full_matches : #{num_full_matches}, num_partial_matches : #{num_position_matches}"
+  #   # no need to calc response when codebreaker wins
+  #   return if game_ended
+
+  #   # if attempt didnt get any matches, remove guess colors from possible options
+  #   if no_matches
+  #     self.guess_options = guess_options.filter do |option|
+  #       !guess_colors.intersect?(option[:colors])
+  #     end
+
+  #   # if guess had any response, remove options which dont have guess colors
+  #   elsif match_present
+  #     self.guess_options = guess_options.filter do |option|
+  #       guess_colors.intersect?(option[:colors])
+  #     end
+  #   end
+
+  #   add_to_guess_history
+  #   show_guess_options
+  #   puts "End of turn. Guess history:".colorize(:cyan)
+  #   show_guess_history
+  # end
 
   private
 
   attr_accessor :guess_options, :current_option, :guess_history
-  attr_reader :code_color_options
+  attr_reader :code_color_options, :secret
 
-  def construct_guess
-    CodePegSet.from_colors(current_option[:colors])
+  def construct_guess(colors)
+    CodePegSet.from_colors(colors)
   end
 
   def add_to_guess_history
@@ -80,9 +121,10 @@ class GuessComputer
   end
 
   def show_guess_options
-    guess_options.each do |guess|
-      pp "index: #{guess[:index]}, colors: #{guess[:colors]}, id: #{guess[:id]}"
-    end
+    pp guess_options
+    # pp "index: #{guess[:index]}, colors: #{guess[:colors]}, id: #{guess[:id]}"
+    # guess_options.each do |guess|
+    # end
   end
 
   def show_guess_history

@@ -1,7 +1,7 @@
 # represents a key peg that can be placed on the feedback portion of the board
 class KeyPeg
-  FULL_MATCH_COLOR = "red".freeze
-  POSITION_MATCH_COLOR = "white".freeze
+  FULL_MATCH_COLOR = "full".freeze
+  POSITION_MATCH_COLOR = "pos".freeze
   COLOR_OPTIONS = [FULL_MATCH_COLOR, POSITION_MATCH_COLOR].freeze
 
   private_class_method :new
