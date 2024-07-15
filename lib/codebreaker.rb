@@ -29,7 +29,7 @@ class Codebreaker
   end
 
   def generate_guess
-    self.guess = guess_computer.compute_donald_knuth
+    self.guess = guess_computer.compute
   end
 
   def feed_clue_to_computer(clue)
