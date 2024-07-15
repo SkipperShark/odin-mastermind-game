@@ -32,13 +32,24 @@ class GuessComputer
       # self.current_option = guess_options.select { |option| option[:id] == "1111" }.first
       colors = "1111".chars.map { |code| CodePeg::COLOR_OPTIONS[code.to_i - 1] }
     else
-      self.current_option = guess_options.first
+      color_codes = []
+      solution.map do |code|
+        color_codes << code
+      end
+      amount_to_backfill = 4 - solution.size
+
+      amount_to_backfill.times do
+        color_codes << color_counter
+      end
+
+      colors = color_codes.map { |code| CodePeg::COLOR_OPTIONS[code.to_i - 1] }
     end
 
     puts "colors : #{colors}"
 
     guess = construct_guess(colors)
     puts "guess : #{guess}".colorize(:blue)
+    guess_history << guess
     guess
   end
 
