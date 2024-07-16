@@ -50,7 +50,7 @@ class GuessComputer
     return if game_ended
 
     if no_matches
-      color_counter += 1
+      self.color_counter += 1
       return
     end
 
@@ -58,12 +58,7 @@ class GuessComputer
       solution << color_counter
     end
 
-    color_counter += 1
-
-
-
-
-
+    self.color_counter += 1
     # if guess had any response, remove options which dont have guess colors
   end
   # def compute_donald_knuth
