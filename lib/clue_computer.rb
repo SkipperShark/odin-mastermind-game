@@ -16,21 +16,10 @@ class ClueComputer
   end
 
   def compute
-    # puts "clue before methdod : #{clue_pegs}"
-    puts "before determine_full_matches"
-    puts "guess_pegs : #{guess_pegs}"
-    puts "secret_pegs : #{secret_pegs}\n\n"
     determine_full_matches
-    puts "after determine_full_matches"
-    puts "guess_pegs : #{guess_pegs}"
-    puts "secret_pegs : #{secret_pegs}\n\n"
-    # puts "clue after method : #{clue_pegs}"
     guess_pegs.compact!
     secret_pegs.compact!
     determine_position_matches
-    puts "after determine_position_matches"
-    puts "guess_pegs : #{guess_pegs}"
-    puts "secret_pegs : #{secret_pegs}\n\n"
     clue_pegs
     # find color and position matches
     # guess_pattern.each.with_index do |guess_code_peg, i|
@@ -118,9 +107,6 @@ class ClueComputer
   end
 
   def determine_position_matches
-    puts "determine_full_matches"
-    puts "guess_pegs : #{guess_pegs}"
-    puts "secret_pegs : #{secret_pegs}"
     guess_peg_colors = guess_pegs.map(&:color)
     secret_peg_colors = secret_pegs.map(&:color)
     pos_matches = guess_peg_colors.intersection(secret_peg_colors)
