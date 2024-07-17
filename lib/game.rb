@@ -1,146 +1,126 @@
-# frozen_string_literal: true
+require "colorize"
 
-require_relative 'player'
-require_relative 'board'
-require_relative 'key_peg'
-require_relative 'code_peg'
-require_relative 'solver'
-require_relative 'utilites'
+require_relative "board"
+require_relative "guess_computer"
+require_relative "codebreaker"
+require_relative "codemaker"
+require_relative "clue_computer"
 
+# main game engine/driver, contains the turn logic, game end condition logic,
+# and core game logic
 class Game
-
   include Utilities
 
   def initialize
-    super
     @board = Board.new
     @winner = nil
     @turn = 1
+    game_start_message
 
-    puts "Welcome to mastermind\n\n"
-    puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
-    print "\n"
+    codemaker_is_human = codemaker_human?
+    codebreaker_is_human = !codemaker_is_human
 
-    if player_is_codemaker
-      @codemaker = Player.new(is_codemaker: true, is_human: true)
-      @codebreaker = Player.new(is_codemaker: false, is_human: false)
-    else
-      @codemaker = Player.new(is_codemaker: true, is_human: false)
-      @codebreaker = Player.new(is_codemaker: false, is_human: true)
-    end
+    @codemaker = Codemaker.new(codemaker_is_human)
+    @codebreaker = Codebreaker.new(codebreaker_is_human)
+    puts "codemaker_is_human : #{codemaker_is_human}".colorize(:blue)
+    puts "codebreaker_is_human : #{codebreaker_is_human}".colorize(:blue)
   end
 
   def play
-    puts "\n\nGame Start!\n\n"
-    puts "secret code : #{@codemaker.show_secret}\n\n"
+    puts "\n\nGame Start!\n\n".colorize(:green)
     if codebreaker.is_human == true
-      while winner.nil?
-        board.show
-        puts "turn : #{turn}"
-        codebreaker.build_guess_pattern
-        unless codebreaker.user_confirmed?
-          codebreaker.reset_guess
-          next
-        end
-        clue = compute_clue(codebreaker.guess, codemaker.secret)
-        board.add_guess(codebreaker.guess, clue)
-        self.winner = determine_winner clue
-        next_turn
-        codebreaker.reset_guess
-      end
-
+      play_with_codebreaker_as_human
     elsif codemaker.is_human == true
-      solver = Solver.new
-      clue = []
-      while winner.nil?
-        puts "turn : #{turn}"
-        board.show
-        codebreaker.guess = solver.derive_guess(clue)
-        clue = compute_clue(codebreaker.guess, codemaker.secret)
-        board.add_guess(codebreaker.guess, clue)
-        self.winner = determine_winner clue
-        next_turn
-        codebreaker.reset_guess
-        puts "----\n\n-----"
-      end
+      play_with_codemaker_as_human
     end
-
-    board.show
-    puts "game ended! Thanks for playing. WINNER : #{winner}"
-
+    game_end_message
   end
 
   private
 
-    attr_accessor :winner, :guess, :turn, :clue, :board
-    attr_reader :codemaker, :codebreaker
+  attr_accessor :winner, :guess, :turn, :clue, :board
+  attr_reader :codemaker, :codebreaker
 
-    def player_is_codemaker
-      valid_choice = false
-      until valid_choice == true
-        puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker"
-        input = user_input
-        if input == "y"
-          return true
-        elsif input == "n"
-          return false
-        else
-          puts "I'm not sure what you mean, please try again"
-        end
+  def play_with_codebreaker_as_human
+    codemaker.generate_secret
+    # codemaker.display_secret
+    while winner.nil?
+      board.show
+      puts "\nturn : #{turn}".colorize(:green)
+      codebreaker.build_guess
+      clue = compute_clue(codebreaker.guess, codemaker.secret)
+      board.add_solve_attempt(codebreaker.guess, clue)
+      self.winner = determine_winner clue
+
+      if winner.nil?
+        next_turn
+        codebreaker.reset_guess
       end
     end
+  end
 
-    def determine_winner (clue)
-      codebreaker_won = clue.count { |key_peg| key_peg.full_match? } >= 4
-      codemaker_won = turn >= 12 &&  !codebreaker_won
-      puts "------------ determine_winner ------------"
-      puts "codebreaker_won : #{codebreaker_won}"
-      puts "codemaker_won : #{codemaker_won}"
-      if codebreaker_won == true
-        return "codebreaker"
-      elsif codemaker_won == true
-        return "codemaker"
+  def play_with_codemaker_as_human
+    codemaker.build_secret
+    while winner.nil?
+      puts "turn : #{turn}"
+      # codemaker.display_secret
+      board.show
+      codebreaker.generate_guess
+      clue = compute_clue(codebreaker.guess, codemaker.secret)
+      codebreaker.feed_clue_to_computer clue
+      board.add_solve_attempt(codebreaker.guess, clue)
+      self.winner = determine_winner clue
+      next_turn
+      codebreaker.reset_guess
+      puts "----\n\n-----"
+    end
+  end
+
+  def game_start_message
+    puts "Welcome to mastermind\n\n".colorize(:green)
+    puts "these are the color options : #{CodePeg::COLOR_OPTIONS}\n"
+    print "\n"
+  end
+
+  def codemaker_human?
+    valid_choice = false
+    until valid_choice == true
+      puts "Would you like to be the codemaker? (y/n). 'n' would make you the codebreaker".colorize(:yellow)
+      input = user_input
+      case input
+      when "y" then return true
+      when "n" then return false
+      else puts "I'm not sure what you mean, please try again".colorize(:!)
       end
-      return nil
+    end
+  end
+
+  def determine_winner(clue)
+    codebreaker_won = clue.all_full_matches?
+    codemaker_won = turn >= 12 && !codebreaker_won
+    if codebreaker_won == true
+      return "codebreaker"
+    elsif codemaker_won == true
+      return "codemaker"
     end
 
-    def next_turn
-      self.turn += 1
-    end
+    nil
+  end
 
-    def compute_clue(guess, secret)
-      secret_pattern = secret.clone.map(&:to_s)
-      guess_pattern = guess.clone.map(&:to_s)
-      clue = []
+  def next_turn
+    self.turn += 1
+  end
 
-      # find color and position matches
-      guess_pattern.each.with_index do |guess_color, i|
-        secret_pattern.each.with_index do |secret_color, y|
-          if guess_color == secret_color and i == y
-            clue << KeyPeg.full_match
-            guess_pattern[i] = nil
-            secret_pattern[y] = nil
-            break
-          end
-        end
-      end
-      guess_pattern.compact!
-      secret_pattern.compact!
+  def compute_clue(guess, secret)
+    clue_computer = ClueComputer.new(guess, secret)
+    clue_computer.compute
+  end
 
-      # find position matches only
-      guess_pattern.each.with_index do |guess_color, i|
-        secret_pattern.each.with_index do |secret_color, y|
-          if guess_color == secret_color
-            clue << KeyPeg.position_match
-            guess_pattern[i] = nil
-            secret_pattern[y] = nil
-            break
-          end
-        end
-      end
-
-      guess_pattern.compact!
-      secret_pattern.compact!
-      return clue
-    end
+  def game_end_message
+    puts "game ended!".colorize(:green)
+    puts "WINNER : #{winner}".colorize(:green)
+    puts "Thanks for playing! Goodbye!".colorize(:green)
+    puts "Board end game state\n".colorize(:green)
+    board.show
+  end
 end

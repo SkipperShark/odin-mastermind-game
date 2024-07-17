@@ -1,54 +1,34 @@
-# represents the mastermind board
+require_relative "peg/code_peg_set"
+require_relative "peg/key_peg_set"
+
+# represents the mastermind board, which includes guess rows and clue rows
 class Board
-  attr_accessor :board
+  attr_accessor :board_rows
 
   def initialize
-    @board = {
-      code_rows: [],
-      decode_rows: [],
-      decoding_rows: [
-        {
-          decode_row: [],
-          
-        }
-      ]
-    }
-    add_code_rows()
-    add_decode_rows
+    @board_rows = Array.new(12) do
+      {
+        guess: CodePegSet.new,
+        clue: KeyPegSet.new
+      }
+    end
   end
 
   def show
-    puts "Code Pegs\t\t\t\t\t\tKey Pegs"
-    p @board[:code_rows]
-    @board[:decode_rows].each do |row|
-      puts "#{row[:code_pegs].map(&:to_s)}\t\t\t\t|\t#{row[:key_pegs].map(&:to_s)}"
+    puts "Guesses\t\t\t\t\t\t\tClues"
+    @board_rows.each do |row|
+      row[:guess].display
+      print "\t\t\t\t|\t\t"
+      row[:clue].display
+      puts ""
     end
   end
 
-  def add_guess(guess_pattern, clue_pattern)
-    # puts "guess_pattern : #{guess_pattern}"
-    row_index = self.board[:decode_rows].rindex { |row| row[:code_pegs].all?("") }
-    # puts "row_index : #{row_index}}"
+  def add_solve_attempt(guess, clue)
+    row_index = board_rows.rindex { |row| row[:guess].not_complete? }
     return if row_index.nil?
-    self.board[:decode_rows][row_index][:code_pegs] = guess_pattern.clone
 
-    clue_pattern.each_index do |i|
-      self.board[:decode_rows][row_index][:key_pegs][i] = clue_pattern[i]
-    end
+    board_rows[row_index][:guess] = guess.dup
+    board_rows[row_index][:clue] = clue.dup
   end
-
-  private
-
-  def add_code_rows
-    @board[:code_rows] = ["?", "?", "?", "?"]
-  end
-
-  def add_decode_rows
-    @board[:decode_rows] = Array.new(12) {{
-        code_pegs:  ['', '', '', ''],
-        # is_code: false,
-        key_pegs: ['','','','']
-      }}
-  end
-
 end
