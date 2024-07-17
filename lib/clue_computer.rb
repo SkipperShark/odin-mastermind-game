@@ -42,12 +42,12 @@ class ClueComputer
     guess_pegs.each_with_index do |guess_peg, index|
       next if guess_peg.nil?
 
-      pos_match_found = secret_peg_colors.index guess_peg.color
-      next unless pos_match_found
+      pos_match_index = secret_peg_colors.index guess_peg.color
+      next unless pos_match_index
 
       clue_pegs.add_position_match
       guess_pegs[index] = nil
-      secret_pegs[index] = nil
+      secret_pegs[pos_match_index] = nil
     end
   end
 end
