@@ -43,7 +43,7 @@ class Game
 
   def play_with_codebreaker_as_human
     codemaker.generate_secret
-    codemaker.display_secret
+    # codemaker.display_secret
     while winner.nil?
       board.show
       puts "\nturn : #{turn}".colorize(:green)
