@@ -29,9 +29,9 @@ class Game
   def play
     puts "\n\nGame Start!\n\n".colorize(:green)
     if codebreaker.is_human == true
-      play_codebreaker_human
+      play_with_codebreaker_as_human
     elsif codemaker.is_human == true
-      play_codemaker_human
+      play_with_codemaker_as_human
     end
     game_end_message
   end
@@ -41,7 +41,7 @@ class Game
   attr_accessor :winner, :guess, :turn, :clue, :board
   attr_reader :codemaker, :codebreaker
 
-  def play_codebreaker_human
+  def play_with_codebreaker_as_human
     codemaker.generate_secret
     codemaker.display_secret
     while winner.nil?
@@ -59,11 +59,11 @@ class Game
     end
   end
 
-  def play_codemaker_human
+  def play_with_codemaker_as_human
     codemaker.build_secret
     while winner.nil?
       puts "turn : #{turn}"
-      codemaker.display_secret
+      # codemaker.display_secret
       board.show
       codebreaker.generate_guess
       clue = compute_clue(codebreaker.guess, codemaker.secret)
@@ -123,5 +123,4 @@ class Game
     puts "Board end game state\n".colorize(:green)
     board.show
   end
-
 end
